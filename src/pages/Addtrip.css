@@ -1,0 +1,36 @@
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+    input {
+      padding: 15px;
+      border: none;
+      width: 250px;
+      border-bottom: 1px solid #a7bcff;
+    }
+
+    .button1 {
+        background-color: #0f4e70;
+      color: white;
+      border: none;
+      padding: 5px;
+      font-size: 20px;
+      height: 40px;
+      width: 90px;
+      box-shadow: 0 2px 4px darkslategray;
+      border-radius: 10%;
+      cursor: pointer;
+     transition: all 0.2s ease;
+     
+      }
+      .button1:hover {
+        background-color: #89c7e9;
+       }
+       
+      .button1:active {
+        box-shadow: 0 0 2px darkslategray;
+        transform: translateY(2px);
+       }
+    

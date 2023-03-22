@@ -1,0 +1,24 @@
+.button {
+    background-color: #48abe0;
+  color: white;
+  border: none;
+  padding: 5px;
+  font-size: 20px;
+  height: 40px;
+  width: 40px;
+  box-shadow: 0 2px 4px darkslategray;
+  border-radius: 50%;
+  cursor: pointer;
+ transition: all 0.2s ease;
+ position: absolute;
+ bottom: 16px;
+ right: 16px;
+  }
+  .button:hover {
+    background-color: #65b9e6;
+   }
+   
+  .button:active {
+    box-shadow: 0 0 2px darkslategray;
+    transform: translateY(2px);
+   }

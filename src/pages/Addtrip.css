@@ -7,14 +7,18 @@ form {
 input {
   padding: 15px;
   border: none;
+  color: white;
   outline: none;
+  background-color: #3b3b3b;
   width: 250px;
   border-radius: 20px;
   /* border-bottom: 1.5px solid #65b9e6; */
 }
 textarea {
+  background-color: #3b3b3b;
   padding: 15px;
   border: none;
+  color: white;
   outline: none;
   width: 250px;
   border-radius: 20px;

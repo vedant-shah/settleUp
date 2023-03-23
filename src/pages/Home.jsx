@@ -7,7 +7,7 @@ function Home() {
     return (
         <div>
             <h3>SettleUp</h3>
-            <BsPlusCircleFill className='button' onClick={() => { history.push("/addtrip") }} />
+            <BsPlusCircleFill className='button' onClick={() => { history.push("/addsplit") }} />
         </div>
     )
 }

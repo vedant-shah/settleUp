@@ -16,6 +16,9 @@
 body {
   background-color: #242424;
 }
+.mont {
+  font-family: "Montserrat";
+}
 a {
   font-weight: 500;
   color: #646cff;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './Addtrip.css'
 import { db } from '../firebase-config';
 import {
@@ -11,6 +11,10 @@ import { useForm } from "react-hook-form";
 
 function Addsplit() {
   const [pageNo, setPageNo] = useState(1)
+  const [currentFriend, setCurrentFriend] = useState('')
+
+  const { name } = JSON.parse(localStorage.getItem('user'))
+  const friends = [name]
   const tripsRef = collection(db, "trips");
   const {
     register,
@@ -19,6 +23,13 @@ function Addsplit() {
     reset,
     handleSubmit,
   } = useForm();
+
+  //* single render use effect
+  useEffect(() => {
+
+  }, [])
+
+  //* Onsubmit function
   const submit = async (data) => {
     // if (newTrip === "") return;
     // await addDoc(tripsRef, {
@@ -27,6 +38,72 @@ function Addsplit() {
     // });
     console.log(data)
   }
+
+  //* Page components
+  const page1 = <>
+    <p style={{ fontSize: '2rem' }} className='mont'>Let's get ourselves a Name</p>
+    <input
+      onKeyDown={e => {
+        if (e.keyCode === 13) {
+          e.preventDefault();
+        }
+      }}
+      type="text"
+      {...register("title", { required: "Title is Required" })}
+      className="new-trip-input m-2"
+      placeholder="Name your Split"
+    /></>
+  const page2 = <><p style={{ fontSize: '2rem' }} className='mont'>Great! Now add some deets...</p><textarea
+    rows="4"
+    type="text"
+    {...register("description")}
+    className="new-trip-input m-2"
+    placeholder="Add some Description"
+  /></>
+  const page3 = <><p style={{ fontSize: '2rem' }} className='mont'>Cool! Now let's choose Currency and Category...</p><select style={{ borderRadius: '20px', width: '50%' }} className="form-select"
+    {...register("currency")} aria-label="Default select example">
+    <option value="rupee">₹ Rupee</option>
+    <option value="dollar">$ Dollar</option>
+    <option value="pound">£ Pound</option>
+  </select>
+
+    <select style={{ borderRadius: '20px', width: '50%' }} className="form-select mb-3"
+      {...register("category")} aria-label="Default select example">
+      <option value="trip">Trip</option>
+      <option value="house">Shared House</option>
+      <option value="event">Event</option>
+      <option value="project">Project</option>
+    </select></>
+  const page4 = <>
+    <p style={{ fontSize: '2rem' }} className='mont'>Perfecto! Let's add some buddies!</p>
+    {friends?.map((friend) => {
+      return <div key={uuidv4()}>
+        <p >{friend}</p>
+      </div>
+    })}
+    <div className='d-flex'>
+
+      <input
+        type="text"
+        style={{ width: '80%', borderRadius: '20px 0 0 20px' }}
+        value={currentFriend}
+        onChange={e => setCurrentFriend(e.target.value)}
+        className="new-trip-input "
+        placeholder="Add a friend"
+        onKeyDown={e => {
+          if (e.keyCode === 13) {
+            e.preventDefault();
+          }
+        }}
+      />
+      <button type="button" onClick={
+        () => {
+          friends.push(currentFriend)
+          setCurrentFriend('')
+        }
+      } style={{ borderRadius: '0 20px 20px 0' }}>add</button>
+    </div>
+  </>
   // const split = {
   //   id,
   //   title,
@@ -49,22 +126,22 @@ function Addsplit() {
     <div>
 
       <form onSubmit={handleSubmit(submit)} className="new-trip-form d-flex align-items-center justify-content-center">
-        <input
-          type="text"
-          {...register("title", { required: "Title is Required" })}
-          className="new-trip-input m-2"
-          placeholder="Name your Split"
-        />
-        <textarea
-          rows="4"
-          type="text"
-          {...register("description")}
-          className="new-trip-input m-2"
-          placeholder="Add some Description"
-        />
 
-        <button className="button1">
-          Add
+        {pageNo === 1 && page1}
+        {pageNo === 2 && page2}
+        {pageNo === 3 && page3}
+        {pageNo === 4 && page4}
+
+
+        <button className="button1"
+          type='button' onClick={() => {
+            const { title } = getValues()
+            if (pageNo === 1 && title)
+              setPageNo(pageNo + 1)
+            else if (pageNo !== 1)
+              setPageNo(pageNo + 1)
+          }}>
+          Next
         </button>
 
       </form>

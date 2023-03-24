@@ -130,7 +130,7 @@ function Addsplit() {
             );
           })}
       </div>
-      <div className="d-flex" >
+      <div className="d-flex">
         <input
           type="text"
           style={{ width: "80%", borderRadius: "20px 0 0 20px" }}
@@ -156,7 +156,7 @@ function Addsplit() {
               setCurrentFriend("");
             }
           }}
-          style={{ borderRadius: "0 20px 20px 0" }}
+          style={{ borderRadius: "0 20px 20px 0", backgroundColor: "#65b9e6" }}
         >
           add
         </button>

@@ -8,13 +8,15 @@ import {
 } from "firebase/firestore";
 import { v4 as uuidv4 } from 'uuid'
 import { useForm } from "react-hook-form";
+import { RxCross2 } from "react-icons/rx";
 
 function Addsplit() {
   const [pageNo, setPageNo] = useState(1)
   const [currentFriend, setCurrentFriend] = useState('')
-
-  const { name } = JSON.parse(localStorage.getItem('user'))
-  const friends = [name]
+  const [friends, setFriends] = useState(() => {
+    const { name } = JSON.parse(localStorage.getItem('user'))
+    return [name]
+  })
   const tripsRef = collection(db, "trips");
   const {
     register,
@@ -46,6 +48,7 @@ function Addsplit() {
       onKeyDown={e => {
         if (e.keyCode === 13) {
           e.preventDefault();
+          setPageNo(pageNo + 1)
         }
       }}
       type="text"
@@ -76,10 +79,14 @@ function Addsplit() {
     </select></>
   const page4 = <>
     <p style={{ fontSize: '2rem' }} className='mont'>Perfecto! Let's add some buddies!</p>
-    {friends?.map((friend) => {
-      return <div key={uuidv4()}>
-        <p >{friend}</p>
-      </div>
+    {Array.isArray(friends) && friends?.map((friend, index) => {
+      return <span className='px-2' style={{ backgroundColor: 'rgba(128,128,128,0.4)', borderRadius: '15px' }} key={uuidv4()}>
+        {friend}
+        <span onClick={() => {
+          console.log('hi')
+          setFriends(previousFriends => previousFriends.filter(i => i !== index))
+        }}> <RxCross2 /></span>
+      </span>
     })}
     <div className='d-flex'>
 
@@ -96,10 +103,12 @@ function Addsplit() {
           }
         }}
       />
-      <button type="button" onClick={
+      <button type='button' onClick={
         () => {
-          friends.push(currentFriend)
-          setCurrentFriend('')
+          if (currentFriend !== '' && !friends.includes(currentFriend)) {
+            setFriends([...friends, currentFriend])
+            setCurrentFriend('')
+          }
         }
       } style={{ borderRadius: '0 20px 20px 0' }}>add</button>
     </div>

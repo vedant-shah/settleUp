@@ -13,7 +13,7 @@ function Addsplit() {
   const [currentFriend, setCurrentFriend] = useState("");
   const [friends, setFriends] = useState(() => {
     const { name } = JSON.parse(localStorage.getItem("user"));
-    return [name.substring(0, name.indexOf(' '))];
+    return [name.substring(0, name.indexOf(' ')).toLowerCase()];
   });
   const [userSplits, setUserSplits] = useState()
   const splitsRef = collection(db, "splits");
@@ -73,15 +73,15 @@ function Addsplit() {
       if (temp?.length === 0) {
         const newUserSplit = {
           email,
-          allUserSplits: [data.id]
+          allUserSplits: {}
         }
+        newUserSplit.allUserSplits[data.title] = data.id
+
         await addDoc(userSplitsRef, newUserSplit);
-        console.log("success")
       }
       else {
         const { allUserSplits, id } = temp[0]
-        allUserSplits.push(data.id)
-
+        allUserSplits[data.title] = data.id
         const userDocInstance = doc(db, "userSplits", id)
         await updateDoc(userDocInstance, { allUserSplits: allUserSplits })
       }
@@ -214,7 +214,7 @@ function Addsplit() {
               setCurrentFriend("");
             }
           }}
-          style={{ borderRadius: "0 20px 20px 0", backgroundColor: "#65b9e6" }}
+          style={{ borderRadius: "0 20px 20px 0", backgroundColor: "#9ec0e5" }}
         >
           add
         </button>

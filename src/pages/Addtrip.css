@@ -12,7 +12,7 @@ input {
   background-color: #3b3b3b;
   width: 250px;
   border-radius: 20px;
-  /* border-bottom: 1.5px solid #65b9e6; */
+  /* border-bottom: 1.5px solid #9ec0e5; */
 }
 textarea {
   background-color: #3b3b3b;
@@ -22,11 +22,11 @@ textarea {
   outline: none;
   width: 250px;
   border-radius: 20px;
-  /* border-bottom: 1.5px solid #65b9e6; */
+  /* border-bottom: 1.5px solid #9ec0e5; */
 }
 
 .button1 {
-  background-color: #65b9e6;
+  background-color: #9ec0e5;
   color: white;
   border: none;
   padding: 5px;
@@ -39,7 +39,7 @@ textarea {
   transition: all 0.2s ease;
 }
 .button1:hover {
-  background-color: #65b9e6;
+  background-color: #9ec0e5;
 }
 
 .button1:active {

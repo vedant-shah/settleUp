@@ -1,5 +1,5 @@
 .button {
-  color: #65b9e6;
+  color: #9ec0e5;
   border: none;
   outline: none;
   /* font-size: 20px; */
@@ -9,11 +9,11 @@
   cursor: pointer;
   transition: all 0.2s ease;
   position: absolute;
-  bottom: 16px;
-  right: 16px;
+  bottom: 2rem;
+  right: 1.5rem;
 }
 .button:hover {
-  background-color: #65b9e6;
+  background-color: #9ec0e5;
 }
 
 .button:active {

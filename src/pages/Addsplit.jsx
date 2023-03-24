@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from "react";
 import "./Addtrip.css";
 import { db } from "../firebase-config";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, query, where, getDocs, updateDoc, doc } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 import { useForm } from "react-hook-form";
 import { RxCross2 } from "react-icons/rx";
+import { useHistory } from "react-router-dom";
 
 function Addsplit() {
+  const history = useHistory()
   const [pageNo, setPageNo] = useState(1);
   const [currentFriend, setCurrentFriend] = useState("");
   const [friends, setFriends] = useState(() => {
     const { name } = JSON.parse(localStorage.getItem("user"));
-    return [name];
+    return [name.substring(0, name.indexOf(' '))];
   });
-  const tripsRef = collection(db, "trips");
+  const [userSplits, setUserSplits] = useState()
+  const splitsRef = collection(db, "splits");
+  const userSplitsRef = collection(db, "userSplits");
   const {
     register,
     formState: { errors },
@@ -23,16 +27,70 @@ function Addsplit() {
   } = useForm();
 
   //* single render use effect
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
 
   //* Onsubmit function
   const submit = async (data) => {
-    // if (newTrip === "") return;
-    // await addDoc(tripsRef, {
-    //   text: newTrip,
-    //   createdAt: serverTimestamp()
-    // });
-    console.log(data);
+    try {
+      //*current users email
+      const { email } = JSON.parse(localStorage.getItem("user"));
+
+      //*user fields to be added before submitting
+      data.id = uuidv4()
+      data.participants = friends
+      data.expenses = {}
+      data.balances = {}
+      data.reimbursement = []
+      data.individualExpenses = {}
+      data.participantsWithEmail = {}
+      friends.forEach((f, i) => {
+        data.balances[f] = 0
+        data.individualExpenses[f] = 0
+        if (i === 0)
+          data.participantsWithEmail[f] = email
+        else
+          data.participantsWithEmail[f] = ''
+      })
+      data.createdAt = new Date()
+      data.createdBy = friends[0]
+      console.log(data);
+
+      //* Submitting new split
+      await addDoc(splitsRef, data);
+
+      //* Adding this current split to the users Array.
+      //query
+      const q = query(userSplitsRef, where("email", "==", email))
+
+      const userSplitsData = await getDocs(q)
+      //*adding all the data retrieved into array called temp
+      const temp = []
+      userSplitsData.docs.map(doc => {
+        temp.push({ ...doc.data(), id: doc.id })
+      })
+
+      //* if no doc is retrieved, then initialize else update
+      if (temp?.length === 0) {
+        const newUserSplit = {
+          email,
+          allUserSplits: [data.id]
+        }
+        await addDoc(userSplitsRef, newUserSplit);
+        console.log("success")
+      }
+      else {
+        const { allUserSplits, id } = temp[0]
+        allUserSplits.push(data.id)
+
+        const userDocInstance = doc(db, "userSplits", id)
+        await updateDoc(userDocInstance, { allUserSplits: allUserSplits })
+      }
+
+      //* navigate on success
+      history.push("/home")
+    } catch (error) {
+      console.log("error:", error)
+    }
   };
 
   //* Page components
@@ -130,7 +188,7 @@ function Addsplit() {
             );
           })}
       </div>
-      <div className="d-flex">
+      <div className="d-flex mt-4">
         <input
           type="text"
           style={{ width: "80%", borderRadius: "20px 0 0 20px" }}
@@ -192,7 +250,7 @@ function Addsplit() {
         {pageNo === 3 && page3}
         {pageNo === 4 && page4}
 
-        <button
+        {pageNo !== 4 && <button
           className="button1"
           type="button"
           onClick={() => {
@@ -202,7 +260,16 @@ function Addsplit() {
           }}
         >
           Next
-        </button>
+        </button>}
+
+        {pageNo === 4 && <button
+          style={{ width: "50%" }}
+          disabled={friends.length <= 1 ? true : false}
+          className="btn btn-outline-info my-5"
+          type="submit"
+        >
+          Finish
+        </button>}
       </form>
     </div>
   );

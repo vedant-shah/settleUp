@@ -240,10 +240,11 @@ function Addsplit() {
   // }
   // }
   return (
-    <div>
+    <div >
       <form
+        style={{ width: '100vw', height: '100vh' }}
         onSubmit={handleSubmit(submit)}
-        className="new-trip-form d-flex align-items-center justify-content-center"
+        className="new-trip-form d-flex align-items-center justify-content-center p-3"
       >
         {pageNo === 1 && page1}
         {pageNo === 2 && page2}

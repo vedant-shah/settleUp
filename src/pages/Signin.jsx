@@ -23,7 +23,12 @@ function Signin() {
   }
   return (
     <>
-      <button className="pb-3" onClick={signin}><span className="me-2 mb-2" style={{ fontSize: '1.5rem' }}><FcGoogle /></span> Sign In with Google</button>
+      <div className="d-flex align-items-center justify-content-center" style={{ width: '100vw', height: '100vh' }}>
+
+        <button className="pb-3" onClick={signin}
+          style={{ color: 'white', backgroundColor: 'black' }}
+        ><span className="me-2 mb-2" style={{ fontSize: '1.5rem', color: 'black' }}><FcGoogle /></span> Sign In with Google</button>
+      </div>
     </>
   );
 }

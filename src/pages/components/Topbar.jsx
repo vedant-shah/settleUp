@@ -7,9 +7,10 @@ function Topbar() {
       <div
         className="d-flex justify-content-between p-3 align-items-center"
         style={{
-          position: "fixed",
-          top: "0",
+          position: "stickyTop",
+          // top: "0",
           width: "100vw",
+          // borderRadius: '0 0 20px 20px',
           backgroundColor: "#141414",
         }}>
         <img style={{ width: "250px" }} src={logo} alt="" />

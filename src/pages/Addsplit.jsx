@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useForm } from "react-hook-form";
 import { RxCross2 } from "react-icons/rx";
 import { useHistory } from "react-router-dom";
+import { IoChevronBack } from "react-icons/io5";
 
 function Addsplit() {
   const history = useHistory()
@@ -182,7 +183,9 @@ function Addsplit() {
                   }}
                 >
                   {" "}
-                  <RxCross2 />
+                  <RxCross2
+                    style={{ display: index === 0 ? 'none' : 'inline' }}
+                  />
                 </span>
               </span>
             );
@@ -246,6 +249,7 @@ function Addsplit() {
         onSubmit={handleSubmit(submit)}
         className="new-trip-form d-flex align-items-center justify-content-center p-3"
       >
+        <IoChevronBack onClick={() => { pageNo === 1 ? history.push('/home') : setPageNo(pageNo - 1) }} style={{ fontSize: '2.5rem', color: '#9ec0e5', position: 'absolute', top: '2rem', left: '1.5rem' }} />
         {pageNo === 1 && page1}
         {pageNo === 2 && page2}
         {pageNo === 3 && page3}

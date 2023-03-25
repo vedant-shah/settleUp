@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import './home.css';
 import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "../firebase-config";
 import { BsPlusCircleFill } from "react-icons/bs";
 import { FcNext } from "react-icons/fc";
 import { useHistory } from 'react-router-dom';
-import { db } from "../firebase-config";
 import Topbar from './components/Topbar';
 function Home() {
     const history = useHistory()
@@ -30,11 +30,19 @@ function Home() {
             {/* {allSplitsOfCurrentUser && console.log(allSplitsOfCurrentUser[0])} */}
             <div className='p-3' style={{ height: '90vh', overflowY: 'scroll' }}>
                 {
-                    allSplitsOfCurrentUser?.length > 0 && Object.keys(allSplitsOfCurrentUser[0].allUserSplits).map(split => (<div key={Math.random()} className="d-flex align-items-center justify-content-between p-5 my-3" style={{ backgroundColor: '#141414', fontSize: '1.5rem', borderRadius: '25px', height: '5rem' }}>
+                    allSplitsOfCurrentUser?.length > 0 && Object.keys(allSplitsOfCurrentUser[0].allUserSplits).map(split => (
+                        <div
+                            onClick={() => {
+                                const id = allSplitsOfCurrentUser[0].allUserSplits[split]
 
-                        <p className='m-0 mont' style={{ display: 'inline-flex', fontFamily: 'Delicious Handrawn' }}>{split}</p>
-                        <FcNext />
-                    </div>))
+                                history.push(`/split/${id}`)
+                            }}
+                            key={Math.random()} className="d-flex align-items-center justify-content-between p-5 my-3" style={{ backgroundColor: '#141414', fontSize: '1.5rem', borderRadius: '25px', height: '5rem' }}>
+
+                            <p className='m-0 mont' style={{ display: 'inline-flex', fontFamily: 'Delicious Handrawn' }}>{split}</p>
+                            <FcNext />
+                        </div>
+                    ))
                 }
             </div>
             <BsPlusCircleFill className='button' onClick={() => { history.push("/addsplit") }} />

@@ -1,7 +1,9 @@
 import React from "react";
 import logo from '../../images/logo.png'
+import { useHistory } from "react-router-dom";
 import { IoChevronBack } from "react-icons/io5";
-function Topbarulta() {
+function ReverseTopBar() {
+  const history = useHistory()
   return (
     <>
       <div
@@ -13,12 +15,12 @@ function Topbarulta() {
           // borderRadius: '0 0 20px 20px',
           backgroundColor: "#141414",
         }}>
-    <IoChevronBack onClick={() => { history.push("/home") }} style={{ fontSize: '2.5rem', color: '#9ec0e5' }} />
+        <IoChevronBack onClick={() => { history.push("/home") }} style={{ fontSize: '2.5rem', color: '#9ec0e5' }} />
         <img style={{ width: "250px" }} src={logo} alt="" />
-       
+
       </div>
     </>
   );
 }
 
-export default Topbarulta;
+export default ReverseTopBar;

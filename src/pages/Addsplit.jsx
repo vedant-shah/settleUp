@@ -13,8 +13,8 @@ function Addsplit() {
   const [pageNo, setPageNo] = useState(1);
   const [currentFriend, setCurrentFriend] = useState("");
   const [friends, setFriends] = useState(() => {
-    const { name } = JSON.parse(localStorage.getItem("user"));
-    return [name.substring(0, name.indexOf(' ')).toLowerCase()];
+    const { nickname } = JSON.parse(localStorage.getItem("user"));
+    return [nickname];
   });
   const [userSplits, setUserSplits] = useState()
   const splitsRef = collection(db, "splits");

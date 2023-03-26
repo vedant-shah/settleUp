@@ -12,12 +12,14 @@ function Signin() {
         uid: result.user.uid,
         name: result.user.displayName,
         email: result.user.email,
+        nickname: result.user.displayName.substring(0, result.user.displayName.indexOf(' ')).toLowerCase(),
         profilePicture: result.user.photoURL,
       });
       localStorage.setItem("user", user);
       history.push("/home")
 
     } catch (error) {
+      console.log("error:", error)
 
     }
   }

@@ -70,8 +70,7 @@ function Split() {
             </form>}
         </div>
     </>
-    let { name } = JSON.parse(localStorage.getItem("user"));
-    name = name.substring(0, name.indexOf(' ')).toLowerCase()
+    let { nickname } = JSON.parse(localStorage.getItem("user"));
     return (<>
         {split && <div style={{ height: '100vh', width: '100vw' }}>
             {showAddNewExpense && addNewExpenseModal}
@@ -89,8 +88,8 @@ function Split() {
                         <IoChevronBack onClick={() => { history.push('/home') }} style={{ fontSize: '2.5rem', color: '#9ec0e5' }} />
                         <h2 className='mont mx-4 display-4'>{split.title}</h2>
                     </div>
-                    <div className='px-3' style={{ backgroundColor: split.balances[name] < 0 ? '#edbe90' : '#89e289', color: '#141414', borderRadius: '10px' }}>
-                        ₹ {split.balances[name]}
+                    <div className='px-3' style={{ backgroundColor: split.balances[nickname] < 0 ? '#edbe90' : '#89e289', color: '#141414', borderRadius: '10px' }}>
+                        ₹ {split.balances[nickname]}
                     </div>
                 </div>
                 <div className='mt-3 w-100 d-flex justify-content-around'>

@@ -1,7 +1,9 @@
 import React from "react";
 import logo from '../../images/logo.png'
 import { MdSettingsSuggest } from "react-icons/md";
+import { useHistory } from "react-router-dom";
 function Topbar() {
+  const history = useHistory()
   return (
     <>
       <div
@@ -14,7 +16,9 @@ function Topbar() {
           backgroundColor: "#141414",
         }}>
         <img style={{ width: "250px" }} src={logo} alt="" />
-        <MdSettingsSuggest style={{ color: "white", fontSize: "2.5rem" }} />
+        <MdSettingsSuggest onClick={() => {
+          history.push("/settings")
+        }} style={{ color: "white", fontSize: "2.5rem" }} />
       </div>
     </>
   );

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import './App.css'
 import Addsplit from './pages/Addsplit';
 import Home from './pages/Home';
+import Settings from './pages/Settings';
 import Signin from './pages/Signin';
 import Split from './pages/Split';
 
@@ -14,6 +15,7 @@ function App() {
       <Router>
         <Switch>
           <Route exact path="/signin" component={Signin} />
+          <Route exact path="/settings" component={Settings} />
           <Route exact path="/home" component={Home} />
           <Route exact path="/addsplit" component={Addsplit} />
           <Route path="/split/:id" component={Split} />

@@ -29,6 +29,7 @@ function Split() {
     const [split, setSplit] = useState()
     const [simpleAdvancedToggle, setSimpleAdvancedToggle] = useState("Simple")
     const [currentTab, setCurrentTab] = useState(1)
+    const [paidBy, setPaidBy] = useState("")
     const [sharedBy, setSharedBy] = useState([])
     const [sharedByChecks, setSharedByChecks] = useState()
     const [amount, setAmount] = useState(0)
@@ -80,7 +81,42 @@ function Split() {
 
     //* on submit function
     const addNewExpense = (data) => {
+        data["amount"] = amount
+        data["date"] = startDate
+        data["sharedBy"] = sharedBy
+        data["paidBy"] = paidBy
+
+        const temp = {}
+        if (simpleAdvancedToggle === 'Simple') {
+            const splitValue = Number((amount / sharedBy.length).toFixed(2))
+            for (let key in sharedByChecks) {
+                if (sharedByChecks[key])
+                    temp[key] = splitValue
+            }
+            data["amountPerPerson"] = temp
+        }
+        else {
+            for (let key in sharedByChecks) {
+                const splitValue = Number((total / numberOfNonCustom).toFixed(2))
+                if (sharedByChecks[key] && customAmountObject[key]) {
+                    temp[key] = customAmountObject[key]
+                }
+                else if (sharedByChecks[key] && !customAmountObject[key]) {
+                    temp[key] = splitValue
+
+                }
+            }
+            data["amountPerPerson"] = temp
+        }
         console.log("data:", data)
+        const { expenses, balances, individualExpenses } = split
+        expenses.push(data)
+        sharedBy.forEach(person => {
+            balances[person] -= data.amountPerPerson[person]
+            individualExpenses[person] += data.amountPerPerson[person]
+        })
+        balances[paidBy] += Number(data.amount)
+        setSplit({ ...split, expenses, balances })
 
     }
     const addNewExpenseModal = <>
@@ -89,7 +125,7 @@ function Split() {
                 <IoChevronBack onClick={() => { setShowAddNewExpense(false) }} style={{ fontSize: '2.5rem', color: '#9ec0e5' }} />
                 <h5 className='mont mx-4 display-6'>Add New Expense</h5>
             </div>
-            {split && <form onSubmit={handleSubmit(addNewExpense)} style={{ height: '90vh' }} className='mt-4 px-4' >
+            {split && <form onSubmit={handleSubmit(addNewExpense)} style={{ height: '85vh' }} className='mt-4 px-4' >
                 <input type="text" className="form-control" placeholder="Title"
                     {...register("title", { required: "Title is Required" })}
                 // style={{ width: '80%' }}
@@ -118,7 +154,11 @@ function Split() {
                     <select
                         style={{ width: "50%" }}
                         className="form-select mx-3"
-                        {...register("paidBy")}
+                        // {...register("paidBy")}
+                        value={paidBy}
+                        onChange={e => {
+                            setPaidBy(e.target.value)
+                        }}
                         aria-label="Default select example"
                     >
                         {split.participants.map(friend => {
@@ -127,8 +167,8 @@ function Split() {
 
                     </select>
                 </div>
-                <div className='mt-2' style={{ height: '50%', overflowY: 'scroll' }}>
-                    <div className='d-flex align-items-center mb-4 justify-content-between'>
+                <div className='mt-2' style={{ height: '50%', }}>
+                    <div className='d-flex align-items-center mb-4 justify-content-between' style={{ backgroundColor: '#171717' }}>
                         <h5 className='text-left '>Shared By:</h5>
                         <button type="button" onClick={() => {
                             setSimpleAdvancedToggle(previous => {
@@ -154,77 +194,14 @@ function Split() {
                             {simpleAdvancedToggle}
                         </button>
                     </div>
-                    {split.participants.map(friend => {
-                        return <div key={friend} className="form-check my-2 d-flex align-items-center justify-content-between">
-                            <div className='d-flex align-items-center'>
-                                <FormControlLabel control={<Checkbox onChange={(e) => {
-                                    if (!e.target.checked) {
-                                        customAmountObject[friend] = undefined
-                                        setTotal(() => {
-                                            let temp = amount;
-                                            Object.values(customAmountObject).forEach((value) => {
-                                                if (value)
-                                                    temp -= value
-                                            })
-                                            return temp
-                                        })
-                                        let count = 0;
+                    <div style={{ overflowY: 'scroll', height: '80%' }}>
 
-                                        for (let key in sharedByChecks) {
-                                            if (sharedByChecks[key] === true && !customAmountObject[key]) {
-                                                count++;
-                                            }
-                                        }
-                                        const textInput = document.getElementById(friend)
-                                        textInput.value = ''
-                                        setNumberOfNonCustom(count)
-                                    }
-                                    if (!sharedByChecks[friend]) {
-                                        const temp = sharedBy
-                                        temp.push(friend)
-                                        setSharedBy(temp)
-
-
-                                    }
-                                    else {
-                                        const temp = [...sharedBy]
-                                        const index = temp.indexOf(friend);
-                                        if (index > -1) { // only splice array when item is found
-                                            temp.splice(index, 1); // 2nd parameter means remove one item only
-                                        }
-                                        setSharedBy([...temp])
-                                        customAmountObject[friend] = undefined
-                                    }
-                                    setSharedByChecks(sharedByChecks => ({
-                                        ...sharedByChecks,
-                                        [friend]: !sharedByChecks[friend],
-                                    }))
-                                }} checked={sharedByChecks[friend]} />} label={friend} />
-                            </div>
-                            {simpleAdvancedToggle === 'Simple' ? <>
-                                {amount ? <span>
-                                    {sharedBy.includes(friend) ? "₹" + (amount / sharedBy.length).toFixed(2) : "₹ 0.00"}
-                                </span> : <span>
-                                    ₹ 0.00
-                                </span>}
-                            </> :
-                                <input type="number" id={friend} className="form-control"
-                                    value={customAmountObject[friend]}
-                                    disabled={!sharedByChecks[friend]}
-                                    onBlur={(e) => {
-                                        if (e.target.value !== '') {
-                                            // setNumberOfNonCustom(() => {
-                                            //     let count = 0
-                                            //     Object.values(customAmountObject).forEach(value => {
-                                            //         if (!value)
-                                            //             count++
-                                            //     })
-                                            //     return count
-                                            // })
-                                            setTotal(total - e.target.value)
-                                            setCustomAmountObject({
-                                                ...customAmountObject, [friend]: Number(Number((e.target.value)).toFixed(2))
-                                            })
+                        {amount > 0 && split.participants.map(friend => {
+                            return <div key={friend} className="form-check my-2 d-flex align-items-center justify-content-between">
+                                <div className='d-flex align-items-center'>
+                                    <FormControlLabel control={<Checkbox onChange={(e) => {
+                                        if (!e.target.checked) {
+                                            customAmountObject[friend] = undefined
                                             setTotal(() => {
                                                 let temp = amount;
                                                 Object.values(customAmountObject).forEach((value) => {
@@ -233,33 +210,101 @@ function Split() {
                                                 })
                                                 return temp
                                             })
-                                        }
-                                    }}
-                                    onChange={(e) => {
-                                        if (e.target.value !== '') {
-                                            setCustomAmountObject({
-                                                ...customAmountObject, [friend]: Number(Number((e.target.value)).toFixed(2))
-                                            })
-                                        }
-                                        let count = 0;
+                                            let count = 0;
 
-                                        for (let key in sharedByChecks) {
-                                            if (sharedByChecks[key] === true && !customAmountObject[key]) {
-                                                count++;
+                                            for (let key in sharedByChecks) {
+                                                if (sharedByChecks[key] === true && !customAmountObject[key]) {
+                                                    count++;
+                                                }
+                                            }
+                                            if (simpleAdvancedToggle === 'Advanced') {
+                                                const textInput = document.getElementById(friend)
+                                                textInput.value = ''
+                                                setNumberOfNonCustom(count)
                                             }
                                         }
-                                        setNumberOfNonCustom(count)
+                                        if (!sharedByChecks[friend]) {
+                                            const temp = sharedBy
+                                            temp.push(friend)
+                                            setSharedBy(temp)
 
-                                    }}
-                                    placeholder={sharedByChecks[friend] ? (total / numberOfNonCustom).toFixed(2)
-                                        : ""
-                                    }
-                                    style={{ width: '40%' }}
-                                />
-                            }
 
-                        </div>
-                    })}
+                                        }
+                                        else {
+                                            const temp = [...sharedBy]
+                                            const index = temp.indexOf(friend);
+                                            if (index > -1) { // only splice array when item is found
+                                                temp.splice(index, 1); // 2nd parameter means remove one item only
+                                            }
+                                            setSharedBy([...temp])
+                                            customAmountObject[friend] = undefined
+                                        }
+                                        setSharedByChecks(sharedByChecks => ({
+                                            ...sharedByChecks,
+                                            [friend]: !sharedByChecks[friend],
+                                        }))
+                                    }} checked={sharedByChecks[friend]} />} label={friend} />
+                                </div>
+                                {simpleAdvancedToggle === 'Simple' ? <>
+                                    {amount ? <span>
+                                        {sharedBy.includes(friend) ? "₹" + (amount / sharedBy.length).toFixed(2) : "₹ 0.00"}
+                                    </span> : <span>
+                                        ₹ 0.00
+                                    </span>}
+                                </> :
+                                    <input type="number" id={friend} className="form-control"
+                                        value={customAmountObject[friend]}
+                                        disabled={!sharedByChecks[friend]}
+                                        onBlur={(e) => {
+                                            if (e.target.value !== '') {
+                                                // setNumberOfNonCustom(() => {
+                                                //     let count = 0
+                                                //     Object.values(customAmountObject).forEach(value => {
+                                                //         if (!value)
+                                                //             count++
+                                                //     })
+                                                //     return count
+                                                // })
+                                                setTotal(total - e.target.value)
+                                                setCustomAmountObject({
+                                                    ...customAmountObject, [friend]: Number(Number((e.target.value)).toFixed(2))
+                                                })
+                                                setTotal(() => {
+                                                    let temp = amount;
+                                                    Object.values(customAmountObject).forEach((value) => {
+                                                        if (value)
+                                                            temp -= value
+                                                    })
+                                                    return temp
+                                                })
+                                            }
+                                        }}
+                                        onChange={(e) => {
+                                            if (e.target.value !== '') {
+                                                setCustomAmountObject({
+                                                    ...customAmountObject, [friend]: Number(Number((e.target.value)).toFixed(2))
+                                                })
+                                            }
+                                            let count = 0;
+
+                                            for (let key in sharedByChecks) {
+                                                if (sharedByChecks[key] === true && !customAmountObject[key]) {
+                                                    count++;
+                                                }
+                                            }
+                                            setNumberOfNonCustom(count)
+
+                                        }}
+                                        placeholder={sharedByChecks[friend] ? (total / numberOfNonCustom).toFixed(2)
+                                            : ""
+                                        }
+                                        style={{ width: '40%' }}
+                                    />
+                                }
+
+                            </div>
+                        })}
+                    </div>
                 </div>
                 <button >
                     Submit

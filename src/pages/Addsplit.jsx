@@ -39,7 +39,7 @@ function Addsplit() {
       //*user fields to be added before submitting
       data.id = uuidv4()
       data.participants = friends
-      data.expenses = {}
+      data.expenses = []
       data.balances = {}
       data.reimbursement = []
       data.individualExpenses = {}

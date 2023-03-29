@@ -38,6 +38,7 @@ function Addsplit() {
 
       //*user fields to be added before submitting
       data.id = uuidv4()
+      console.log("data.id :", data.id)
       data.participants = friends
       data.expenses = []
       data.balances = {}
@@ -67,8 +68,9 @@ function Addsplit() {
       //*adding all the data retrieved into array called temp
       const temp = []
       userSplitsData.docs.map(doc => {
-        temp.push({ ...doc.data(), id: doc.id })
+        temp.push({ ...doc.data(), id: data.id })
       })
+      console.log("temp:", temp)
 
       //* if no doc is retrieved, then initialize else update
       if (temp?.length === 0) {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, updateDoc, doc } from "firebase/firestore";
 import { db } from "../firebase-config";
 import { IoChevronBack } from 'react-icons/io5'
 import { BsPiggyBank } from 'react-icons/bs'
@@ -35,14 +35,17 @@ function Split() {
     const [amount, setAmount] = useState(0)
     const [customAmountObject, setCustomAmountObject] = useState()
     const [total, setTotal] = useState(0)
+    const [documentID, setDocumentID] = useState('')
     const [numberOfNonCustom, setNumberOfNonCustom] = useState(0)
     const q = query(splitsRef, where("id", "==", id))
     const getCurrentSplit = async () => {
         const splitsData = await getDocs(q)
         const temp = []
         splitsData.docs.map(doc => {
-            temp.push({ ...doc.data(), id: doc.id })
+            temp.push({ ...doc.data(), id })
+            setDocumentID(doc.id)
         })
+        console.log("temp:", temp)
         setSplit(temp[0])
         // setSharedBy([temp[0].participants[0]])
         setSharedByChecks(() => {
@@ -80,7 +83,7 @@ function Split() {
     }, [sharedByChecks])
 
     //* on submit function
-    const addNewExpense = (data) => {
+    const addNewExpense = async (data) => {
         data["amount"] = amount
         data["date"] = startDate
         data["sharedBy"] = sharedBy
@@ -109,6 +112,7 @@ function Split() {
             data["amountPerPerson"] = temp
         }
         console.log("data:", data)
+        console.log("split:", split)
         const { expenses, balances, individualExpenses } = split
         expenses.push(data)
         sharedBy.forEach(person => {
@@ -117,6 +121,18 @@ function Split() {
         })
         balances[paidBy] += Number(data.amount)
         setSplit({ ...split, expenses, balances })
+        const localSplit = { ...split, expenses, balances }
+        const { id } = split
+        console.log("id:", id)
+        try {
+            const userDocInstance = doc(db, "splits", documentID)
+            await updateDoc(userDocInstance, localSplit)
+            // history.push(`/split/${id}`)
+            location.reload()
+        } catch (error) {
+            console.log("error:", error)
+
+        }
 
     }
     const addNewExpenseModal = <>
@@ -306,7 +322,7 @@ function Split() {
                         })}
                     </div>
                 </div>
-                <button >
+                <button disabled={amount > 0 && sharedBy.length >= 1 ? false : true} >
                     Submit
                 </button>
             </form>}

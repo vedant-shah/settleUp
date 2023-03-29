@@ -11,6 +11,7 @@ import { IoChevronBack } from "react-icons/io5";
 function Addsplit() {
   const history = useHistory()
   const [pageNo, setPageNo] = useState(1);
+  const [docID, setDocID] = useState()
   const [currentFriend, setCurrentFriend] = useState("");
   const [friends, setFriends] = useState(() => {
     const { nickname } = JSON.parse(localStorage.getItem("user"));
@@ -32,68 +33,69 @@ function Addsplit() {
 
   //* Onsubmit function
   const submit = async (data) => {
-    try {
-      //*current users email
-      const { email } = JSON.parse(localStorage.getItem("user"));
+    // try {
+    //*current users email
+    const { email } = JSON.parse(localStorage.getItem("user"));
 
-      //*user fields to be added before submitting
-      data.id = uuidv4()
-      console.log("data.id :", data.id)
-      data.participants = friends
-      data.expenses = []
-      data.balances = {}
-      data.reimbursement = []
-      data.individualExpenses = {}
-      data.participantsWithEmail = {}
-      friends.forEach((f, i) => {
-        data.balances[f] = 0
-        data.individualExpenses[f] = 0
-        if (i === 0)
-          data.participantsWithEmail[f] = email
-        else
-          data.participantsWithEmail[f] = ''
-      })
-      data.createdAt = new Date()
-      data.createdBy = friends[0]
-      console.log(data);
+    //*user fields to be added before submitting
+    data.id = uuidv4()
+    console.log("data.id :", data.id)
+    data.participants = friends
+    data.expenses = []
+    data.balances = {}
+    data.reimbursement = []
+    data.individualExpenses = {}
+    data.participantsWithEmail = {}
+    friends.forEach((f, i) => {
+      data.balances[f] = 0
+      data.individualExpenses[f] = 0
+      if (i === 0)
+        data.participantsWithEmail[f] = email
+      else
+        data.participantsWithEmail[f] = ''
+    })
+    data.createdAt = new Date()
+    data.createdBy = friends[0]
+    console.log(data);
 
-      //* Submitting new split
-      await addDoc(splitsRef, data);
+    //* Submitting new split
+    await addDoc(splitsRef, data);
 
-      //* Adding this current split to the users Array.
-      //query
-      const q = query(userSplitsRef, where("email", "==", email))
+    //* Adding this current split to the users Array.
+    //query
+    const q = query(userSplitsRef, where("email", "==", email))
 
-      const userSplitsData = await getDocs(q)
-      //*adding all the data retrieved into array called temp
-      const temp = []
-      userSplitsData.docs.map(doc => {
-        temp.push({ ...doc.data(), id: data.id })
-      })
-      console.log("temp:", temp)
+    const userSplitsData = await getDocs(q)
+    //*adding all the data retrieved into array called temp
+    const temp = []
+    userSplitsData.docs.map(doc => {
+      temp.push({ ...doc.data(), id: data.id })
+      setDocID(doc.id)
+    })
+    console.log("temp:", temp[0])
 
-      //* if no doc is retrieved, then initialize else update
-      if (temp?.length === 0) {
-        const newUserSplit = {
-          email,
-          allUserSplits: {}
-        }
-        newUserSplit.allUserSplits[data.title] = data.id
-
-        await addDoc(userSplitsRef, newUserSplit);
+    //* if no doc is retrieved, then initialize else update
+    if (temp?.length === 0) {
+      const newUserSplit = {
+        email,
+        allUserSplits: {}
       }
-      else {
-        const { allUserSplits, id } = temp[0]
-        allUserSplits[data.title] = data.id
-        const userDocInstance = doc(db, "userSplits", id)
-        await updateDoc(userDocInstance, { allUserSplits: allUserSplits })
-      }
+      newUserSplit.allUserSplits[data.title] = data.id
 
-      //* navigate on success
-      history.push("/home")
-    } catch (error) {
-      console.log("error:", error)
+      await addDoc(userSplitsRef, newUserSplit);
     }
+    else {
+      const { allUserSplits, id } = temp[0]
+      allUserSplits[data.title] = data.id
+      const userDocInstance = doc(db, "userSplits", docID)
+      await updateDoc(userDocInstance, { allUserSplits: allUserSplits })
+    }
+
+    //* navigate on success
+    history.push("/home")
+    // } catch (error) {
+    //   console.log("error:", error)
+    // }
   };
 
   //* Page components

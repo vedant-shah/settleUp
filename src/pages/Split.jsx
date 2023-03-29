@@ -12,6 +12,7 @@ import Checkbox from '@mui/material/Checkbox';
 import { RiUserReceived2Line } from 'react-icons/ri'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import ExpensesList from './components/ExpensesList';
 
 function Split() {
     const history = useHistory()
@@ -29,7 +30,7 @@ function Split() {
     const [split, setSplit] = useState()
     const [simpleAdvancedToggle, setSimpleAdvancedToggle] = useState("Simple")
     const [currentTab, setCurrentTab] = useState(1)
-    const [paidBy, setPaidBy] = useState("")
+    const [paidBy, setPaidBy] = useState()
     const [sharedBy, setSharedBy] = useState([])
     const [sharedByChecks, setSharedByChecks] = useState()
     const [amount, setAmount] = useState(0)
@@ -64,6 +65,7 @@ function Split() {
             })
             return t
         })
+        setPaidBy(temp[0].participants[0])
     }
     useEffect(() => {
         getCurrentSplit()
@@ -116,10 +118,10 @@ function Split() {
         const { expenses, balances, individualExpenses } = split
         expenses.push(data)
         sharedBy.forEach(person => {
-            balances[person] -= data.amountPerPerson[person]
+            balances[person] -= Number((data.amountPerPerson[person]).toFixed(2))
             individualExpenses[person] += data.amountPerPerson[person]
         })
-        balances[paidBy] += Number(data.amount)
+        balances[paidBy] += Number(Number(data.amount).toFixed(2))
         setSplit({ ...split, expenses, balances })
         const localSplit = { ...split, expenses, balances }
         const { id } = split
@@ -330,7 +332,7 @@ function Split() {
     </>
     let { nickname } = JSON.parse(localStorage.getItem("user"));
     return (<>
-        {split && <div style={{ height: '100vh', width: '100vw' }}>
+        {split && <div style={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column' }}>
             {showAddNewExpense && addNewExpenseModal}
             <div
                 className="d-flex justify-content-center flex-column p-0 align-items-start"
@@ -347,7 +349,7 @@ function Split() {
                         <h2 className='mont mx-4 display-6'>{split.title}</h2>
                     </div>
                     <div className='px-3' style={{ backgroundColor: split.balances[nickname] < 0 ? '#edbe90' : '#89e289', color: '#141414', borderRadius: '10px' }}>
-                        ₹ {split.balances[nickname]}
+                        ₹ {split.balances[nickname].toFixed(2)}
                     </div>
                 </div>
                 <div className='mt-3 w-100 d-flex justify-content-around'>
@@ -365,6 +367,12 @@ function Split() {
                     </div>
 
                 </div>
+            </div>
+            <div style={{ flexGrow: '1' }}>
+                {split.expenses?.map(expense => {
+
+                    return <ExpensesList key={expense.id} title={expense.title} paidBy={expense.paidBy} date={expense.date} amount={expense.amount} />
+                })}
             </div>
             {currentTab === 1 && <BsPlusCircleFill className='button' onClick={() => { setShowAddNewExpense(true) }} />}
         </div>}

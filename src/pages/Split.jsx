@@ -11,8 +11,11 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { RiUserReceived2Line } from 'react-icons/ri'
 import DatePicker from "react-datepicker";
+import Decimal from 'decimal.js';
+// import bigDecimal from 'js-big-decimal';
 import "react-datepicker/dist/react-datepicker.css";
 import ExpensesList from './components/ExpensesList';
+import ViewExpense from './components/ViewExpense';
 
 function Split() {
     const history = useHistory()
@@ -28,6 +31,8 @@ function Split() {
     const [showAddNewExpense, setShowAddNewExpense] = useState(false)
     const [startDate, setStartDate] = useState(new Date());
     const [split, setSplit] = useState()
+    const [showExpensesPage, setShowExpensesPage] = useState(false)
+    const [viewExpenseObject, setViewExpenseObject] = useState()
     const [simpleAdvancedToggle, setSimpleAdvancedToggle] = useState("Simple")
     const [currentTab, setCurrentTab] = useState(1)
     const [paidBy, setPaidBy] = useState()
@@ -46,7 +51,7 @@ function Split() {
             temp.push({ ...doc.data(), id })
             setDocumentID(doc.id)
         })
-        console.log("temp:", temp)
+        console.log(temp[0])
         setSplit(temp[0])
         // setSharedBy([temp[0].participants[0]])
         setSharedByChecks(() => {
@@ -113,15 +118,18 @@ function Split() {
             }
             data["amountPerPerson"] = temp
         }
-        console.log("data:", data)
+        console.dir("data:", data)
         console.log("split:", split)
         const { expenses, balances, individualExpenses } = split
         expenses.push(data)
         sharedBy.forEach(person => {
-            balances[person] -= Number((data.amountPerPerson[person]).toFixed(2))
+            const balancesNumeral = new Decimal(balances[person].toFixed(2))
+            const amountPerPersonNumeral = new Decimal((data.amountPerPerson[person]).toFixed(2))
+            balances[person] = (balancesNumeral.minus(amountPerPersonNumeral)).toNumber()
             individualExpenses[person] += data.amountPerPerson[person]
         })
-        balances[paidBy] += Number(Number(data.amount).toFixed(2))
+        const balancesPaidByNumeral = new Decimal(balances[paidBy].toFixed(2))
+        balances[paidBy] = (balancesPaidByNumeral.plus(new Decimal(Number(data.amount).toFixed(2)))).toNumber()
         setSplit({ ...split, expenses, balances })
         const localSplit = { ...split, expenses, balances }
         const { id } = split
@@ -334,6 +342,7 @@ function Split() {
     return (<>
         {split && <div style={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column' }}>
             {showAddNewExpense && addNewExpenseModal}
+            {showExpensesPage && viewExpenseObject && <ViewExpense setShowExpensesPage={setShowExpensesPage} expense={viewExpenseObject} nickname={nickname} />}
             <div
                 className="d-flex justify-content-center flex-column p-0 align-items-start"
                 style={{
@@ -368,14 +377,17 @@ function Split() {
 
                 </div>
             </div>
-            <div style={{ flexGrow: '1' }}>
-                {split.expenses?.map(expense => {
 
-                    return <ExpensesList key={expense.id} title={expense.title} paidBy={expense.paidBy} date={expense.date} amount={expense.amount} />
+            <div key={Math.random()} style={{ flexGrow: '1', overflowY: 'scroll' }}>
+                {split.expenses?.map(expense => {
+                    return <ExpensesList setShowExpensesPage={setShowExpensesPage}
+                        nickname={nickname}
+                        sharedBy={expense.sharedBy} setViewExpenseObject={setViewExpenseObject} expense={expense} key={Math.random()} title={expense.title} paidBy={expense.paidBy} date={expense.date} amount={expense.amount} />
                 })}
             </div>
             {currentTab === 1 && <BsPlusCircleFill className='button' onClick={() => { setShowAddNewExpense(true) }} />}
         </div>}
+
     </>)
 }
 

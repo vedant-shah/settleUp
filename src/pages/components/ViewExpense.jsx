@@ -2,16 +2,47 @@ import React from "react";
 import { IoChevronBack } from "react-icons/io5";
 import dayjs from "dayjs";
 import { HiOutlineTrash } from 'react-icons/hi'
-function ViewExpense({ expense, setShowExpensesPage, nickname }) {
+import { collection, query, where, getDocs, updateDoc, doc } from "firebase/firestore";
+import { db } from "../../firebase-config";
+import Decimal from 'decimal.js';
+
+function ViewExpense({ expense, setShowExpensesPage, nickname, split, documentID }) {
+  console.log("split:", split)
+  const removeExpense = async () => {
+    expense.sharedBy.forEach(person => {
+      const balancesNumeral = new Decimal(split.balances[person].toFixed(2))
+      const amountPerPersonNumeral = new Decimal((expense.amountPerPerson[person]).toFixed(2))
+      split.balances[person] = (balancesNumeral.plus(amountPerPersonNumeral)).toNumber()
+      split.individualExpenses[person] = (new Decimal(split.individualExpenses[person].toFixed(2)).minus(new Decimal(expense.amountPerPerson[person].toFixed(2)))).toNumber()
+    })
+    const balancesPaidByNumeral = new Decimal(split.balances[expense.paidBy].toFixed(2))
+    split.balances[expense.paidBy] = (balancesPaidByNumeral.minus(new Decimal(Number(expense.amount).toFixed(2)))).toNumber()
+    const filteredExpense = split.expenses.filter(e => {
+      if (e.title !== expense.title) {
+        return e
+      }
+    })
+    const localSplit = { ...split, expenses: filteredExpense }
+    try {
+      const userDocInstance = doc(db, "splits", documentID)
+      await updateDoc(userDocInstance, localSplit)
+    } catch (e) {
+      console.log("e:", e)
+
+    }
+    location.reload()
+    console.log("localSplit:", localSplit)
+  }
+
   return (
     <>
-      <div className="d-flex flex-column" style={{ height: "100vh", width: "100vw", zIndex: "10000", backgroundColor: '#141414', position: 'absolute' }}>
+      <div className="d-flex flex-column" style={{ height: "100vh", width: "100vw", zIndex: "1000", backgroundColor: '#141414', position: 'absolute' }}>
         <div style={{ height: '30%', width: '100%', backgroundColor: '#171717' }} className="d-flex flex-column ">
           <div className="d-flex p-3 justify-content-between align-items-center" style={{ height: '3rem', width: '100%' }}>
             <IoChevronBack onClick={() => {
               setShowExpensesPage(false)
             }} style={{ fontSize: '2rem', color: '#9ec0e5', cursor: 'pointer' }} />
-            <span style={{ fontSize: '2rem', color: '#f27979' }}><HiOutlineTrash /></span>
+            <HiOutlineTrash style={{ fontSize: '2rem', color: '#f27979' }} onClick={removeExpense} />
           </div>
           <div className="d-flex p-4 flex-column justify-content-center align-items-center w-100" style={{ flexGrow: '1' }}>
             <h2 className="" style={{ fontSize: '2.4rem' }}>{expense.title}</h2>

@@ -342,7 +342,7 @@ function Split() {
     return (<>
         {split && <div style={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column' }}>
             {showAddNewExpense && addNewExpenseModal}
-            {showExpensesPage && viewExpenseObject && <ViewExpense setShowExpensesPage={setShowExpensesPage} expense={viewExpenseObject} nickname={nickname} />}
+            {showExpensesPage && viewExpenseObject && <ViewExpense setShowExpensesPage={setShowExpensesPage} expense={viewExpenseObject} nickname={nickname} split={split} documentID={documentID} />}
             <div
                 className="d-flex justify-content-center flex-column p-0 align-items-start"
                 style={{
@@ -382,7 +382,7 @@ function Split() {
                 {split.expenses?.map(expense => {
                     return <ExpensesList setShowExpensesPage={setShowExpensesPage}
                         nickname={nickname}
-                        sharedBy={expense.sharedBy} setViewExpenseObject={setViewExpenseObject} expense={expense} key={Math.random()} title={expense.title} paidBy={expense.paidBy} date={expense.date} amount={expense.amount} />
+                        setViewExpenseObject={setViewExpenseObject} expense={expense} key={Math.random()} />
                 })}
             </div>
             {currentTab === 1 && <BsPlusCircleFill className='button' onClick={() => { setShowAddNewExpense(true) }} />}

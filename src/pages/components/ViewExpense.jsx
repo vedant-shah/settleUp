@@ -53,11 +53,11 @@ function ViewExpense({ expense, setShowExpensesPage, nickname, split, documentID
             <h6>{dayjs(expense.date.toDate()).format("DD/MM/YYYY")}</h6>
           </div>
         </div>
-        <div className=" d-flex flex-column" style={{ flexGrow: '1', width: '100%' }}>
+        <div className=" d-flex flex-column ps-3" style={{ flexGrow: '1', width: '100%' }}>
           <h3 className="mont my-4 mx-auto">Split:</h3>
           <div style={{ overflowY: 'scroll' }}>
-            {expense.sharedBy.map(person => {
-              return <div className="d-flex justify-content-between p-2" style={{ borderTop: '1px solid gray', borderBottom: '1px solid gray', color: !(person === nickname) ? 'white' : '#9ec0e5' }} key={Math.random()}>
+            {expense.sharedBy.map((person, index) => {
+              return <div className="d-flex justify-content-between p-2" style={{ backgroundColor: index % 2 === 0 ? "#171717" : "#202020", borderBottom: '1px solid gray', color: !(person === nickname) ? 'white' : '#9ec0e5' }} key={Math.random()}>
                 <span>
                   {person}
                 </span>

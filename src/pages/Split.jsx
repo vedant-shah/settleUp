@@ -16,6 +16,7 @@ import Decimal from 'decimal.js';
 import "react-datepicker/dist/react-datepicker.css";
 import ExpensesList from './components/ExpensesList';
 import ViewExpense from './components/ViewExpense';
+import Balances from './components/Balances';
 
 function Split() {
     const history = useHistory()
@@ -51,7 +52,7 @@ function Split() {
             temp.push({ ...doc.data(), id })
             setDocumentID(doc.id)
         })
-        console.log(temp[0])
+        // console.log(temp[0])
         setSplit(temp[0])
         // setSharedBy([temp[0].participants[0]])
         setSharedByChecks(() => {
@@ -357,7 +358,7 @@ function Split() {
                         <IoChevronBack onClick={() => { history.push('/home') }} style={{ fontSize: '2.5rem', color: '#9ec0e5' }} />
                         <h2 className='mont mx-4 display-6'>{split.title}</h2>
                     </div>
-                    <div className='px-3' style={{ backgroundColor: split.balances[nickname] < 0 ? '#edbe90' : '#89e289', color: '#141414', borderRadius: '10px' }}>
+                    <div className='px-3' style={{ backgroundColor: split.balances[nickname] < 0 ? '#f27979' : '#67e9a9', color: '#141414', borderRadius: '10px' }}>
                         ₹ {split.balances[nickname].toFixed(2)}
                     </div>
                 </div>
@@ -378,14 +379,24 @@ function Split() {
                 </div>
             </div>
 
-            <div key={Math.random()} style={{ flexGrow: '1', overflowY: 'scroll' }}>
-                {split.expenses?.map(expense => {
-                    return <ExpensesList setShowExpensesPage={setShowExpensesPage}
-                        nickname={nickname}
-                        setViewExpenseObject={setViewExpenseObject} expense={expense} key={Math.random()} />
-                })}
-            </div>
-            {currentTab === 1 && <BsPlusCircleFill className='button' onClick={() => { setShowAddNewExpense(true) }} />}
+            {currentTab === 1 &&
+                <>
+                    <div key={Math.random()} style={{ flexGrow: '1', overflowY: 'scroll' }}>
+                        {split.expenses?.map(expense => {
+                            return <ExpensesList setShowExpensesPage={setShowExpensesPage}
+                                nickname={nickname}
+                                setViewExpenseObject={setViewExpenseObject} expense={expense} key={Math.random()} />
+                        })}
+                    </div>
+                    <BsPlusCircleFill className='button' onClick={() => { setShowAddNewExpense(true) }} />
+                </>
+            }
+            {
+                currentTab === 2 &&
+                <div key={Math.random()} className='py-3 ps-3' style={{ flexGrow: '1', overflowY: 'scroll' }}>
+                    <Balances split={split} />
+                </div>
+            }
         </div>}
 
     </>)

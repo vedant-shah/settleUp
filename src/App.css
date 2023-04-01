@@ -22,3 +22,6 @@
   border: 6px solid transparent;
   background-clip: content-box;
 }
+.bold-font {
+  font-family: "Montserrat", sans-serif;
+}

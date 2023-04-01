@@ -12,7 +12,6 @@ import Checkbox from '@mui/material/Checkbox';
 import { RiUserReceived2Line } from 'react-icons/ri'
 import DatePicker from "react-datepicker";
 import Decimal from 'decimal.js';
-// import bigDecimal from 'js-big-decimal';
 import "react-datepicker/dist/react-datepicker.css";
 import ExpensesList from './components/ExpensesList';
 import ViewExpense from './components/ViewExpense';
@@ -382,9 +381,9 @@ function Split() {
             {currentTab === 1 &&
                 <>
                     <div key={Math.random()} style={{ flexGrow: '1', overflowY: 'scroll' }}>
-                        {split.expenses?.map(expense => {
+                        {split.expenses?.map((expense, index) => {
                             return <ExpensesList setShowExpensesPage={setShowExpensesPage}
-                                nickname={nickname}
+                                nickname={nickname} index={index}
                                 setViewExpenseObject={setViewExpenseObject} expense={expense} key={Math.random()} />
                         })}
                     </div>
@@ -394,7 +393,7 @@ function Split() {
             {
                 currentTab === 2 &&
                 <div key={Math.random()} className='py-3 ps-3' style={{ flexGrow: '1', overflowY: 'scroll' }}>
-                    <Balances split={split} />
+                    <Balances split={split} documentID={documentID} setSplit={setSplit} />
                 </div>
             }
         </div>}

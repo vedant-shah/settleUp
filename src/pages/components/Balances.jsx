@@ -3,11 +3,16 @@ import { GoPrimitiveDot } from 'react-icons/go'
 import { RxTriangleDown } from 'react-icons/rx'
 import { RxTriangleUp } from 'react-icons/rx'
 import { TbArrowBigRightLinesFilled } from 'react-icons/tb'
+import { updateDoc, doc } from "firebase/firestore";
+import { db } from "../../firebase-config";
+import Decimal from 'decimal.js'
 
-function Balances({ split }) {
+function Balances({ split, documentID, setSplit }) {
     let { balances } = split
     let balance = { ...balances }
     const [settlementsArray, setSettlementsArray] = useState([])
+    const [markAsPaid, setMarkAsPaid] = useState()
+    const [showMarkAsPaidModal, setShowMarkAsPaidModal] = useState(false)
     function getMin(bal) {
         let min = bal[Object.keys(bal)[0]];
         Object.keys(bal).forEach(person => {
@@ -44,10 +49,25 @@ function Balances({ split }) {
                 balance[max] = 0;
             }
         }
-        console.log(temp)
         setSettlementsArray(temp)
     }
-
+    const markBalanceAsPaid = async () => {
+        split.reimbursement.push(markAsPaid)
+        const temp = new Decimal(split.balances[markAsPaid.from].toFixed(2))
+        const temp1 = new Decimal(split.balances[markAsPaid.to].toFixed(2))
+        split.balances[markAsPaid.from] = (temp.plus(new Decimal(Number(markAsPaid.amount).toFixed(2)))).toNumber()
+        split.balances[markAsPaid.to] = (temp1.minus(new Decimal(Number(markAsPaid.amount).toFixed(2)))).toNumber()
+        try {
+            const userDocInstance = doc(db, "splits", documentID)
+            await updateDoc(userDocInstance, split)
+        } catch (e) {
+            console.log("e:", e)
+        }
+        setSplit({ ...split })
+        setMarkAsPaid()
+        setShowMarkAsPaidModal(false)
+        console.log("split.reimbursement:", split)
+    }
     useEffect(() => {
         getSettlementArray()
     }, [])
@@ -57,13 +77,19 @@ function Balances({ split }) {
         split.expenses.forEach(expense => {
             sum += Number(expense.amount)
         })
-        return sum.toFixed(2)
+        return Number(sum.toFixed(2)).toLocaleString();
     }
     const getTotalPaidBy = (friend) => {
         let sum = 0;
         split.expenses?.forEach(expense => {
             if (expense.paidBy === friend)
                 sum += Number(expense.amount)
+        })
+        split.reimbursement?.forEach(expense => {
+            if (expense.from === friend)
+                sum += Number(expense.amount)
+            if (expense.to === friend)
+                sum -= Number(expense.amount)
         })
         return sum.toFixed(2)
     }
@@ -79,6 +105,26 @@ function Balances({ split }) {
                     {getTotalExpense()}
                 </div>
             </div>}
+            {showMarkAsPaidModal && <>
+                <div className="d-flex p-3 justify-content-center align-items-center" style={{ position: 'absolute', height: '100vh', width: '100vw', backgroundColor: 'rgba(0,0,0,0.7)', top: '0', left: '0', zIndex: '2000', backdropFilter: 'blur(5px)' }}>
+                    <div className='w-100 d-flex flex-column' style={{ backgroundColor: '#252525', borderRadius: '10px' }}>
+                        <div className='p-3'>
+
+                            <h5 className='text-center mont mb-3'>
+                                Are you sure <span style={{ color: '#f27979' }}>{markAsPaid.from}</span> has paid <span style={{ color: '#67e9a9' }}>{markAsPaid.to}</span> , ₹ {markAsPaid.amount}?
+                            </h5>
+                            <span><i>Note: This cannot be undone.</i></span>
+                        </div>
+                        <div className="w-100">
+                            <button type="button" onClick={() => {
+                                setMarkAsPaid()
+                                setShowMarkAsPaidModal(false)
+                            }} className="btn w-50 btn-danger">No</button>
+                            <button type="button" onClick={markBalanceAsPaid} className="btn w-50 btn-success">Yes</button>
+                        </div>
+                    </div>
+                </div>
+            </>}
             <div className='my-4'>
                 {split && <table className='table table-sm table-dark table-borderless table-striped' style={{ tableLayout: 'fixed' }}>
                     <thead>
@@ -92,7 +138,7 @@ function Balances({ split }) {
                         {
                             split.participants.map(friend => {
                                 return (
-                                    <tr >
+                                    <tr key={Math.random()}>
                                         <td className='text-start ' style={{ textOverflow: 'ellipsis', overflow: 'hiddden' }}><GoPrimitiveDot style={{ color: split.balances[friend] >= 0 ? "#67e9a9" : "#f27979" }} />{friend}</td>
                                         <td className='text-center'>₹{getTotalPaidBy(friend)}</td>
                                         <td className='text-left' style={{ color: split.balances[friend] >= 0 ? "#67e9a9" : "#f27979" }}>{split.balances[friend] >= 0 ? <RxTriangleUp style={{ fontSize: '1.5rem' }} /> : <RxTriangleDown style={{ fontSize: '1.5rem' }} />} {Math.abs(split.balances[friend])}</td>
@@ -129,7 +175,10 @@ function Balances({ split }) {
                                         <img src={`https://api.dicebear.com/6.x/big-ears-neutral/svg?mouth=variant0707,variant0702,variant0201&seed=${settlement.to}&radius=40&size=48`} alt="" />
                                     </div>
                                 </div>
-                                <div className='w-100 py-1 d-flex justify-content-center' style={{ backgroundColor: '#141414', borderRadius: '0px 0 5px 5px', border: '1px solid #141414' }}>Mark as Paid</div>
+                                <div className='w-100 py-1 d-flex justify-content-center' onClick={() => {
+                                    setShowMarkAsPaidModal(true)
+                                    setMarkAsPaid(settlement)
+                                }} style={{ backgroundColor: '#141414', borderRadius: '0px 0 5px 5px', border: '1px solid #141414' }}>Mark as Paid</div>
                             </div>
                         )
                     })

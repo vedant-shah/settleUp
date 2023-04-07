@@ -26,7 +26,10 @@
   font-family: "Montserrat", sans-serif;
 }
 .lin-grad {
-  background: linear-gradient(to right, #f69d50, #ffdeb3);
+  background: linear-gradient(to right, #f69d50, #ffd6a1);
+}
+.lin-grad1 {
+  background: linear-gradient(to right, #67e9a9, #c0ffc0);
 }
 /* td {
   display: flex;

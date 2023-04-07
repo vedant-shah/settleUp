@@ -57,9 +57,17 @@ function Split() {
         // console.log(temp[0])
         setSplit(temp[0])
         const { email } = JSON.parse(localStorage.getItem('user'))
+        const user = JSON.parse(localStorage.getItem('user'))
+        console.log("user:", user)
         if (!Object.values(temp[0].participantsWithEmail).includes(email)) {
             setShowChooseNameModal(true);
         }
+        Object.keys(temp[0].participantsWithEmail).forEach(person => {
+            if (temp[0].participantsWithEmail[person] === email) {
+                user.nickname = person;
+                localStorage.setItem("user", JSON.stringify(user))
+            }
+        })
         // setSharedBy([temp[0].participants[0]])
         setSharedByChecks(() => {
             const t = {}

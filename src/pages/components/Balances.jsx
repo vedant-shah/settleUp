@@ -95,7 +95,7 @@ function Balances({ split, documentID, setSplit }) {
     }
     return (
         <>
-            {split && <div className="w-100 p-2 d-flex flex-column justify-content-center" style={{ backgroundColor: '#67e9a9', borderRadius: '10px', color: 'black' }}>
+            {split && <div className="w-100 p-2 d-flex lin-grad1 flex-column justify-content-center" style={{ borderRadius: '10px', color: 'black' }}>
                 <div className='' style={{ fontSize: '1.2rem', fontWeight: 'bolder' }}>
                     Total
                 </div>

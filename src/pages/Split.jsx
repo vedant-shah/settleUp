@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
-import { collection, query, where, getDocs, updateDoc, doc } from "firebase/firestore";
+import { collection, query, where, getDocs, updateDoc, doc, addDoc } from "firebase/firestore";
 import { db } from "../firebase-config";
 import { IoChevronBack } from 'react-icons/io5'
 import { BsPiggyBank } from 'react-icons/bs'
@@ -16,6 +16,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import ExpensesList from './components/ExpensesList';
 import ViewExpense from './components/ViewExpense';
 import Balances from './components/Balances';
+import Mine from './components/Mine';
 
 function Split() {
     const history = useHistory()
@@ -30,7 +31,9 @@ function Split() {
     } = useForm();
     const [showAddNewExpense, setShowAddNewExpense] = useState(false)
     const [startDate, setStartDate] = useState(new Date());
+    const [docID, setDocID] = useState()
     const [split, setSplit] = useState()
+    const [showChooseNameModal, setShowChooseNameModal] = useState(false)
     const [showExpensesPage, setShowExpensesPage] = useState(false)
     const [viewExpenseObject, setViewExpenseObject] = useState()
     const [simpleAdvancedToggle, setSimpleAdvancedToggle] = useState("Simple")
@@ -53,6 +56,10 @@ function Split() {
         })
         // console.log(temp[0])
         setSplit(temp[0])
+        const { email } = JSON.parse(localStorage.getItem('user'))
+        if (!Object.values(temp[0].participantsWithEmail).includes(email)) {
+            setShowChooseNameModal(true);
+        }
         // setSharedBy([temp[0].participants[0]])
         setSharedByChecks(() => {
             const t = {}
@@ -73,7 +80,12 @@ function Split() {
         setPaidBy(temp[0].participants[0])
     }
     useEffect(() => {
-        getCurrentSplit()
+        const { email } = JSON.parse(localStorage.getItem('user'))
+        if (!email)
+            history.push('/signin')
+        else {
+            getCurrentSplit()
+        }
     }, [])
     useEffect(() => {
         setTotal(amount)
@@ -338,10 +350,89 @@ function Split() {
             </form>}
         </div>
     </>
+    const [choosenCharacter, setChoosenCharacter] = useState('')
+    const chooseThisCharacter = async () => {
+        let { participantsWithEmail } = split
+        const { email } = JSON.parse(localStorage.getItem('user'))
+        participantsWithEmail[choosenCharacter] = email
+        const updatedSplit = { ...split, participantsWithEmail }
+        const userDocInstance = doc(db, "userSplits", documentID)
+        const splitsDocInstance = doc(db, "splits", documentID)
+        await updateDoc(splitsDocInstance, updatedSplit)
+        console.log("updatedSplit:", updatedSplit)
+
+        const userSplitsRef = collection(db, "userSplits");
+        const q = query(userSplitsRef, where("email", "==", email))
+
+        const userSplitsData = await getDocs(q)
+        //*adding all the data retrieved into array called temp
+        const temp = []
+        userSplitsData.docs.map(doc => {
+            temp.push({ ...doc.data(), id: split.id })
+            setDocID(doc.id)
+        })
+        console.log("temp:", temp[0])
+
+        //* if no doc is retrieved, then initialize else update
+        if (temp?.length === 0) {
+            const newUserSplit = {
+                email,
+                allUserSplits: {}
+            }
+            newUserSplit.allUserSplits[split.title] = split.id
+
+            await addDoc(userSplitsRef, newUserSplit);
+        }
+        else {
+            const { allUserSplits, id } = temp[0]
+            allUserSplits[split.title] = split.id
+            try {
+                const userDocInstance = doc(db, "userSplits", docID)
+                await updateDoc(userDocInstance, { allUserSplits: allUserSplits })
+            } catch (e) {
+                console.log("e:", e)
+            }
+        }
+        location.reload()
+    }
+    const chooseNameModal = <>
+        {split && <div className='p-4 d-flex justify-content-center align-items-center flex-column' style={{ height: '100vh', width: '100vw', position: 'absolute', zIndex: '100', backgroundColor: '#171717' }}>
+            {choosenCharacter.length > 0 && <div style={{ position: 'relative' }}> <img style={{ height: '15rem' }} src={`https://api.dicebear.com/6.x/adventurer/svg?scale=100&seed=${choosenCharacter}&radius=40&size=80`} alt="" /> </div>}
+            <div className="card p-4 d-flex justify-content-center align-items-center">
+                <h2 className='mont'>Hi, Welcome to {split.title} !</h2>
+                <div className="dropdown my-3">
+
+                    <select
+                        style={{ borderRadius: "20px", width: "100%" }}
+                        className="form-select"
+                        aria-label="Default select example"
+                        value={choosenCharacter}
+                        onChange={(e) => {
+                            setChoosenCharacter(e.target.value)
+                        }}
+                    >
+                        <option disabled value={''}>Choose your character</option>
+                        {Object.keys(split.participantsWithEmail).map(person => {
+                            if (split.participantsWithEmail[person] === '') {
+                                return <option key={Math.random()} value={person}>{person}</option>
+                            }
+                        })}
+                    </select>
+                </div>
+                {choosenCharacter.length > 0 && <span className='my-2' >
+                    <i> PS: This cannot be changed later. </i>
+                </span>}
+                {choosenCharacter.length > 0 && <button style={{ borderRadius: '20px' }} onClick={chooseThisCharacter} className="btn px-3 mt-2 btn-primary">
+                    Let's SplitUp!
+                </button>}
+            </div>
+        </div>}
+    </>
     let { nickname } = JSON.parse(localStorage.getItem("user"));
     return (<>
         {split && <div style={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column' }}>
             {showAddNewExpense && addNewExpenseModal}
+            {showChooseNameModal && split && chooseNameModal}
             {showExpensesPage && viewExpenseObject && <ViewExpense setShowExpensesPage={setShowExpensesPage} expense={viewExpenseObject} nickname={nickname} split={split} documentID={documentID} />}
             <div
                 className="d-flex justify-content-center flex-column p-0 align-items-start"
@@ -394,6 +485,12 @@ function Split() {
                 currentTab === 2 &&
                 <div key={Math.random()} className='py-3 ps-3' style={{ flexGrow: '1', overflowY: 'scroll' }}>
                     <Balances split={split} documentID={documentID} setSplit={setSplit} />
+                </div>
+            }
+            {
+                currentTab === 3 &&
+                <div key={Math.random()} className='py-3 ps-3' style={{ flexGrow: '1', overflowY: 'scroll' }}>
+                    <Mine split={split} documentID={documentID} setSplit={setSplit} />
                 </div>
             }
         </div>}

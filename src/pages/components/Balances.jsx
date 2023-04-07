@@ -77,7 +77,7 @@ function Balances({ split, documentID, setSplit }) {
         split.expenses.forEach(expense => {
             sum += Number(expense.amount)
         })
-        return Number(sum.toFixed(2)).toLocaleString();
+        return Number(sum.toFixed(2)).toLocaleString(undefined, { minimumFractionDigits: 2 });
     }
     const getTotalPaidBy = (friend) => {
         let sum = 0;
@@ -139,9 +139,9 @@ function Balances({ split, documentID, setSplit }) {
                             split.participants.map(friend => {
                                 return (
                                     <tr key={Math.random()}>
-                                        <td className='text-start ' style={{ textOverflow: 'ellipsis', overflow: 'hiddden' }}><GoPrimitiveDot style={{ color: split.balances[friend] >= 0 ? "#67e9a9" : "#f27979" }} />{friend}</td>
+                                        <td className='text-center ' style={{ textOverflow: 'ellipsis', overflow: 'hiddden' }}><GoPrimitiveDot style={{ color: split.balances[friend] >= 0 ? "#67e9a9" : "#f27979" }} />{friend}</td>
                                         <td className='text-center'>₹{getTotalPaidBy(friend)}</td>
-                                        <td className='text-left' style={{ color: split.balances[friend] >= 0 ? "#67e9a9" : "#f27979" }}>{split.balances[friend] >= 0 ? <RxTriangleUp style={{ fontSize: '1.5rem' }} /> : <RxTriangleDown style={{ fontSize: '1.5rem' }} />} {Math.abs(split.balances[friend])}</td>
+                                        <td className='text-center' style={{ color: split.balances[friend] >= 0 ? "#67e9a9" : "#f27979" }}>{split.balances[friend] >= 0 ? <RxTriangleUp style={{ fontSize: '1.5rem' }} /> : <RxTriangleDown style={{ fontSize: '1.5rem' }} />} {Math.abs(split.balances[friend])}</td>
                                     </tr>
                                 )
                             })
@@ -157,9 +157,10 @@ function Balances({ split, documentID, setSplit }) {
                     settlementsArray?.map(settlement => {
                         return (
                             <div className='my-2' key={Math.random()}>
-                                <div className="card flex-row align-items-center justify-content-between w-100 px-3 d-flex" style={{}}>
-                                    <div className='my-3' style={{ display: 'inline' }}>
-                                        <img src={`https://api.dicebear.com/6.x/big-ears-neutral/svg?mouth=variant0704,variant0705,variant0501&seed=${settlement.from}&radius=40&size=48`} alt="" />
+                                <div className="card flex-row align-items-center justify-content-between w-100 px-2 d-flex" style={{}}>
+                                    <div className='my-2' style={{ display: 'inline' }}>
+                                        <img src={`https://api.dicebear.com/6.x/adventurer/svg?scale=100&seed=${settlement.from}&radius=40&size=80`} alt="" />
+                                        {/* <img src={`https://api.dicebear.com/6.x/big-ears-neutral/svg?mouth=variant0704,variant0705,variant0501&seed=${settlement.from}&radius=40&size=48`} alt="" /> */}
                                     </div>
                                     <div className='d-flex justify-content-center align-items-center flex-column'>
                                         <span>
@@ -172,7 +173,8 @@ function Balances({ split, documentID, setSplit }) {
                                     <div><TbArrowBigRightLinesFilled style={{ fontSize: '1.4rem', color: '#9ec0e5' }} /></div>
                                     <div>{settlement.to}</div>
                                     <div>
-                                        <img src={`https://api.dicebear.com/6.x/big-ears-neutral/svg?mouth=variant0707,variant0702,variant0201&seed=${settlement.to}&radius=40&size=48`} alt="" />
+                                        {/* <img src={`https://api.dicebear.com/6.x/big-ears-neutral/svg?mouth=variant0707,variant0702,variant0201&seed=${settlement.to}&radius=40&size=48`} alt="" /> */}
+                                        <img src={`https://api.dicebear.com/6.x/adventurer/svg?scale=100&seed=${settlement.to}&radius=40&size=80`} alt="" />
                                     </div>
                                 </div>
                                 <div className='w-100 py-1 d-flex justify-content-center' onClick={() => {

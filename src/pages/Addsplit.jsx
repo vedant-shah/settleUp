@@ -87,8 +87,12 @@ function Addsplit() {
     else {
       const { allUserSplits, id } = temp[0]
       allUserSplits[data.title] = data.id
-      const userDocInstance = doc(db, "userSplits", docID)
-      await updateDoc(userDocInstance, { allUserSplits: allUserSplits })
+      try {
+        const userDocInstance = doc(db, "userSplits", docID)
+        updateDoc(userDocInstance, { allUserSplits: allUserSplits })
+      } catch (e) {
+        console.log("e:", e)
+      }
     }
 
     //* navigate on success

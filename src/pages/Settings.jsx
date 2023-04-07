@@ -28,10 +28,11 @@ function Settings() {
     }
     return (
         <>
-            <div className='' style={{ height: '100vh', width: '100vw' }}>
+            <div className='d-flex flex-column align-items-center' style={{ height: '100vh', width: '100vw' }}>
                 <div><ReverseTopBar /></div>
                 <div className=" py-4 d-flex align-items-center flex-column">
                     <img className="mx-auto" style={{ borderRadius: "200px", width: '150px' }} src={profilePicture} />
+                    {/* <img src={`https://api.dicebear.com/6.x/adventurer/svg?scale=100&seed=${name}&translateY=10&size=96`} alt="" style={{ width: '175px' }} /> */}
                     <h2 className="mt-4 mb-0 mont">Welcome, {nickname}</h2>
                     <div className="d-flex align-items-center mb-4 mt-2">
 
@@ -39,7 +40,7 @@ function Settings() {
                             {email} </h6>
                         <MdVerified className="mx-2 " style={{ color: '#89e289' }} />
                     </div>
-                    <div style={{ width: '80%' }} className="d-flex  align-items-center justify-content-around">
+                    {/* <div style={{ width: '80%' }} className="d-flex  align-items-center justify-content-around">
                         <span style={{ fontWeight: 'bold' }}>
                             Nick Name:
                         </span>
@@ -64,9 +65,9 @@ function Settings() {
                                 /></span>
                             </div>
                         </div>}
-                    </div>
+                    </div> */}
                 </div>
-                <button type="button" onClick={signUserOut} class="btn btn-outline-danger" style={{ width: '50%' }}>Signout</button>
+                <button type="button" onClick={signUserOut} className="btn btn-danger" style={{ width: '70%', bottom: '30px', position: 'absolute', borderRadius: '10px' }}>Signout</button>
             </div>
 
         </>

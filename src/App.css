@@ -25,3 +25,10 @@
 .bold-font {
   font-family: "Montserrat", sans-serif;
 }
+.lin-grad {
+  background: linear-gradient(to right, #f69d50, #ffdeb3);
+}
+/* td {
+  display: flex;
+  justify-content: center;
+} */

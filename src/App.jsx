@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Settings from './pages/Settings';
 import Signin from './pages/Signin';
 import Split from './pages/Split';
+import Landing from './pages/Landing';
 
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
 
       <Router>
         <Switch>
+          <Route exact path="/" component={Landing} />
           <Route exact path="/signin" component={Signin} />
           <Route exact path="/settings" component={Settings} />
           <Route exact path="/home" component={Home} />

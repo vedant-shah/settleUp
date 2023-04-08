@@ -105,7 +105,7 @@ function Addsplit() {
   //* Page components
   const page1 = (
     <>
-      <p style={{ fontSize: "2rem" }} className="mont">
+      <p style={{ fontSize: "2rem" }} className="mont text-center">
         Let's get ourselves a Name
       </p>
       <input
@@ -124,7 +124,7 @@ function Addsplit() {
   );
   const page2 = (
     <>
-      <p style={{ fontSize: "2rem" }} className="mont">
+      <p style={{ fontSize: "2rem" }} className="mont text-center">
         Great! Now add some deets...
       </p>
       <textarea
@@ -138,7 +138,7 @@ function Addsplit() {
   );
   const page3 = (
     <>
-      <p style={{ fontSize: "2rem" }} className="mont">
+      <p style={{ fontSize: "2rem" }} className="mont text-center">
         Cool! Now let's choose Currency and Category...
       </p>
       <select
@@ -167,7 +167,7 @@ function Addsplit() {
   );
   const page4 = (
     <>
-      <p style={{ fontSize: "2rem" }} className="mont">
+      <p style={{ fontSize: "2rem" }} className="mont text-center">
         Perfecto! Let's add some buddies!
       </p>
       <div className="d-flex" style={{ flexWrap: "wrap" }}>

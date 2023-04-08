@@ -7,6 +7,10 @@ import { FcNext } from "react-icons/fc";
 import { useHistory } from 'react-router-dom';
 import Topbar from './components/Topbar';
 function Home() {
+    useEffect(() => {
+        if (!localStorage.getItem('user'))
+            history.push("/signin")
+    }, [])
     const history = useHistory()
     const { email } = JSON.parse(localStorage.getItem("user"));
     const userSplitsRef = collection(db, "userSplits");

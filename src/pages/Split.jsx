@@ -38,13 +38,20 @@ function Split() {
     const [showExpensesPage, setShowExpensesPage] = useState(false)
     const [viewExpenseObject, setViewExpenseObject] = useState()
     const [simpleAdvancedToggle, setSimpleAdvancedToggle] = useState("Simple")
-    const [currentTab, setCurrentTab] = useState(1)
+    let { nickname } = JSON.parse(localStorage.getItem("user"));
+    const [currentTab, setCurrentTab] = useState(() => {
+        if (!localStorage.getItem('nicknameChosen'))
+            return 0
+        else
+            return 1
+    })
     const [paidBy, setPaidBy] = useState()
     const [dummyState, setDummyState] = useState(0)
     const [showModifySplit, setShowModifySplit] = useState(false)
     const [sharedBy, setSharedBy] = useState([])
     const [sharedByChecks, setSharedByChecks] = useState()
     const [amount, setAmount] = useState(0)
+    const [nickNameChosen, setNickNameChosen] = useState(false)
     const [customAmountObject, setCustomAmountObject] = useState()
     const [total, setTotal] = useState(0)
     const [documentID, setDocumentID] = useState('')
@@ -57,12 +64,15 @@ function Split() {
             temp.push({ ...doc.data(), id })
             setDocumentID(doc.id)
         })
-        // console.log(temp[0])
+        console.log(temp[0])
         setSplit(temp[0])
         const { email } = JSON.parse(localStorage.getItem('user'))
         const user = JSON.parse(localStorage.getItem('user'))
         if (!Object.values(temp[0].participantsWithEmail).includes(email)) {
             setShowChooseNameModal(true);
+        }
+        if (temp[0].participants.includes(nickname)) {
+            setCurrentTab(1)
         }
         Object.keys(temp[0].participantsWithEmail).forEach(person => {
             if (temp[0].participantsWithEmail[person] === email) {
@@ -110,6 +120,7 @@ function Split() {
         }
         setNumberOfNonCustom(count)
     }, [sharedByChecks])
+
 
     //* on submit function
     const addNewExpense = async (data) => {
@@ -407,6 +418,8 @@ function Split() {
                 console.log("e:", e)
             }
         }
+        setCurrentTab(1)
+        localStorage.setItem('nicknameChosen', 'yes')
         location.reload()
     }
     const chooseNameModal = <>
@@ -565,7 +578,7 @@ function Split() {
             </div>
         </div>}
     </>
-    let { nickname } = JSON.parse(localStorage.getItem("user"));
+
     return (<>
         {split && <div style={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column' }}>
             {showAddNewExpense && addNewExpenseModal}
@@ -573,7 +586,7 @@ function Split() {
             {showConfirmDelete && split && confirmDeleteModal}
             {showModifySplit && split && editSplitModal}
             {showExpensesPage && viewExpenseObject && <ViewExpense setShowExpensesPage={setShowExpensesPage} expense={viewExpenseObject} nickname={nickname} split={split} documentID={documentID} />}
-            <div
+            {currentTab !== 0 && <div
                 className="d-flex justify-content-center flex-column p-0 align-items-start"
                 style={{
                     position: "stickyTop",
@@ -608,7 +621,7 @@ function Split() {
                     </div>
 
                 </div>
-            </div>
+            </div>}
 
             {currentTab === 1 &&
                 <>

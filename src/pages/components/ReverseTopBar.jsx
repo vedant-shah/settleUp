@@ -13,7 +13,7 @@ function ReverseTopBar() {
           // top: "0",
           width: "100vw",
           // borderRadius: '0 0 20px 20px',
-          backgroundColor: "#141414",
+          backgroundColor: "#1a1a1a",
         }}>
         <IoChevronBack onClick={() => { history.push("/home") }} style={{ fontSize: '2.5rem', color: '#9ec0e5' }} />
         <img style={{ width: "250px" }} src={logo} alt="" />

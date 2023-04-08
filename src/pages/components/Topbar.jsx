@@ -13,7 +13,7 @@ function Topbar() {
           // top: "0",
           width: "100vw",
           // borderRadius: '0 0 20px 20px',
-          backgroundColor: "#141414",
+          backgroundColor: "#1a1a1a",
         }}>
         <img style={{ width: "250px" }} src={logo} alt="" />
         <MdSettingsSuggest onClick={() => {

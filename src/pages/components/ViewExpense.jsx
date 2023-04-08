@@ -52,7 +52,7 @@ function ViewExpense({ expense, setShowExpensesPage, nickname, split, documentID
 
   return (
     <>
-      <div className="d-flex flex-column" style={{ height: "100vh", width: "100vw", zIndex: "1000", backgroundColor: '#141414', position: 'absolute' }}>
+      <div className="d-flex flex-column" style={{ height: "100vh", width: "100vw", zIndex: "1000", backgroundColor: '#1a1a1a', position: 'absolute' }}>
         <div style={{ height: '30%', width: '100%', backgroundColor: '#171717' }} className="d-flex flex-column ">
           <div className="d-flex p-3 justify-content-between align-items-center" style={{ height: '3rem', width: '100%' }}>
             <IoChevronBack onClick={() => {

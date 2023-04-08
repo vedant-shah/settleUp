@@ -159,7 +159,7 @@ function Balances({ split, documentID, setSplit }) {
                             <div className='my-2' key={Math.random()}>
                                 <div className="card flex-row align-items-center justify-content-between w-100 px-2 d-flex" style={{}}>
                                     <div className='my-2' style={{ display: 'inline' }}>
-                                        <img src={`https://api.dicebear.com/6.x/adventurer/svg?scale=100&seed=${settlement.from}&radius=40&size=80`} alt="" />
+                                        <img src={`https://api.dicebear.com/6.x/adventurer/svg?scale=100&skinColor=9e5622,f2d3b1,ecad80&seed=${settlement.from}&radius=40&size=80`} alt="" />
                                         {/* <img src={`https://api.dicebear.com/6.x/big-ears-neutral/svg?mouth=variant0704,variant0705,variant0501&seed=${settlement.from}&radius=40&size=48`} alt="" /> */}
                                     </div>
                                     <div className='d-flex justify-content-center align-items-center flex-column'>
@@ -174,13 +174,13 @@ function Balances({ split, documentID, setSplit }) {
                                     <div>{settlement.to}</div>
                                     <div>
                                         {/* <img src={`https://api.dicebear.com/6.x/big-ears-neutral/svg?mouth=variant0707,variant0702,variant0201&seed=${settlement.to}&radius=40&size=48`} alt="" /> */}
-                                        <img src={`https://api.dicebear.com/6.x/adventurer/svg?scale=100&seed=${settlement.to}&radius=40&size=80`} alt="" />
+                                        <img src={`https://api.dicebear.com/6.x/adventurer/svg?scale=100&skinColor=9e5622,f2d3b1,ecad80&seed=${settlement.to}&radius=40&size=80`} alt="" />
                                     </div>
                                 </div>
                                 <div className='w-100 py-1 d-flex justify-content-center' onClick={() => {
                                     setShowMarkAsPaidModal(true)
                                     setMarkAsPaid(settlement)
-                                }} style={{ backgroundColor: '#141414', borderRadius: '0px 0 5px 5px', border: '1px solid #141414' }}>Mark as Paid</div>
+                                }} style={{ backgroundColor: '#1a1a1a', borderRadius: '0px 0 5px 5px', border: '1px solid #1a1a1a' }}>Mark as Paid</div>
                             </div>
                         )
                     })

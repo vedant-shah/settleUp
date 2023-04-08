@@ -32,7 +32,7 @@ function Settings() {
                 <div><ReverseTopBar /></div>
                 <div className=" py-4 d-flex align-items-center flex-column">
                     <img className="mx-auto" style={{ borderRadius: "200px", width: '150px' }} src={profilePicture} />
-                    {/* <img src={`https://api.dicebear.com/6.x/adventurer/svg?scale=100&seed=${name}&translateY=10&size=96`} alt="" style={{ width: '175px' }} /> */}
+                    {/* <img src={`https://api.dicebear.com/6.x/adventurer/svg?scale=100&skinColor=9e5622,f2d3b1,ecad80&seed=${name}&translateY=10&size=96`} alt="" style={{ width: '175px' }} /> */}
                     <h2 className="mt-4 mb-0 mont">Welcome, {nickname}</h2>
                     <div className="d-flex align-items-center mb-4 mt-2">
 

@@ -37,7 +37,7 @@ function Home() {
 
                                 history.push(`/split/${id}`)
                             }}
-                            key={Math.random()} className="d-flex align-items-center justify-content-between p-5 my-3" style={{ backgroundColor: '#141414', fontSize: '1.5rem', borderRadius: '25px', height: '5rem' }}>
+                            key={Math.random()} className="d-flex align-items-center justify-content-between p-5 my-3" style={{ backgroundColor: '#1a1a1a', fontSize: '1.5rem', borderRadius: '25px', height: '5rem' }}>
 
                             <p className='m-0 mont' style={{ display: 'inline-flex', fontFamily: 'Delicious Handrawn' }}>{split}</p>
                             <FcNext />

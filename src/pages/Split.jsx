@@ -58,7 +58,6 @@ function Split() {
         setSplit(temp[0])
         const { email } = JSON.parse(localStorage.getItem('user'))
         const user = JSON.parse(localStorage.getItem('user'))
-        console.log("user:", user)
         if (!Object.values(temp[0].participantsWithEmail).includes(email)) {
             setShowChooseNameModal(true);
         }
@@ -405,7 +404,7 @@ function Split() {
     }
     const chooseNameModal = <>
         {split && <div className='p-4 d-flex justify-content-center align-items-center flex-column' style={{ height: '100vh', width: '100vw', position: 'absolute', zIndex: '100', backgroundColor: '#171717' }}>
-            {choosenCharacter.length > 0 && <div style={{ position: 'relative' }}> <img style={{ height: '15rem' }} src={`https://api.dicebear.com/6.x/adventurer/svg?scale=100&seed=${choosenCharacter}&radius=40&size=80`} alt="" /> </div>}
+            {choosenCharacter.length > 0 && <div style={{ position: 'relative' }}> <img style={{ height: '15rem' }} src={`https://api.dicebear.com/6.x/adventurer/svg?scale=100&skinColor=9e5622,f2d3b1,ecad80&seed=${choosenCharacter}&radius=40&size=80`} alt="" /> </div>}
             <div className="card p-4 d-flex justify-content-center align-items-center">
                 <h2 className='mont'>Hi, Welcome to {split.title} !</h2>
                 <div className="dropdown my-3">
@@ -449,14 +448,14 @@ function Split() {
                     // top: "0",
                     width: "100vw",
                     // borderRadius: '0 0 20px 20px',
-                    backgroundColor: "#141414",
+                    backgroundColor: "#1a1a1a",
                 }}>
                 <div className='d-flex w-100 px-4 align-items-center justify-content-between'>
                     <div className='d-flex py-3 align-items-center'>
                         <IoChevronBack onClick={() => { history.push('/home') }} style={{ fontSize: '2.5rem', color: '#9ec0e5' }} />
                         <h2 className='mont mx-4 display-6'>{split.title}</h2>
                     </div>
-                    <div className='px-3' style={{ backgroundColor: split.balances[nickname] < 0 ? '#f27979' : '#67e9a9', color: '#141414', borderRadius: '10px' }}>
+                    <div className='px-3' style={{ backgroundColor: split.balances[nickname] < 0 ? '#f27979' : '#67e9a9', color: '#1a1a1a', borderRadius: '10px' }}>
                         ₹ {split.balances[nickname].toFixed(2)}
                     </div>
                 </div>

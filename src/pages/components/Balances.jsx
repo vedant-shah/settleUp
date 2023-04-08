@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { GoPrimitiveDot } from 'react-icons/go'
 import { RxTriangleDown } from 'react-icons/rx'
+import { RxCross2 } from 'react-icons/rx'
+import dayjs from 'dayjs'
 import { RxTriangleUp } from 'react-icons/rx'
 import { TbArrowBigRightLinesFilled } from 'react-icons/tb'
 import { updateDoc, doc } from "firebase/firestore";
@@ -93,6 +95,46 @@ function Balances({ split, documentID, setSplit }) {
         })
         return sum.toFixed(2)
     }
+    const [showReimbursementHitory, setShowReimbursementHitory] = useState(false)
+    const reimbursementHistory = <>
+        <div className="d-flex p-4 flex-column " style={{ position: 'absolute', height: '100vh', width: '100vw', backgroundColor: '#1a1a1a', top: '0', left: '0', zIndex: '2000' }}>
+            <div className="d-flex justify-content-between w-100" style={{ height: '5%' }}>
+                <h5 className="mont">Reimbursement History</h5>
+                <RxCross2 style={{ fontSize: '1.5rem' }} onClick={() => {
+                    setShowReimbursementHitory(false)
+                }} />
+            </div>
+            <div className='mt-2' style={{ flexGrow: '1', overflowY: 'scroll' }}>
+                {
+                    split.reimbursement.map(reimbursement => {
+                        return (<div className='my-3' key={Math.random()}>
+                            <div className="card flex-row align-items-center justify-content-between w-100 px-2 d-flex" style={{}}>
+                                <div className='my-2' style={{ display: 'inline' }}>
+                                    <img src={`https://api.dicebear.com/6.x/adventurer/svg?scale=100&skinColor=9e5622,f2d3b1,ecad80&seed=${reimbursement.from}&radius=40&size=64`} alt="" />
+                                    {/* <img src={`https://api.dicebear.com/6.x/big-ears-neutral/svg?mouth=variant0704,variant0705,variant0501&seed=${settlement.from}&radius=40&size=48`} alt="" /> */}
+                                </div>
+                                <span>
+                                    {reimbursement.from}
+                                </span>
+                                <div className='d-flex mx-3 justify-content-center align-items-center flex-column'>
+                                    <TbArrowBigRightLinesFilled style={{ fontSize: '1.4rem', color: '#9ec0e5' }} />
+                                    <span style={{ fontSize: '0.8rem', color: '#67e9a9' }}>
+                                        ₹ {reimbursement.amount}
+                                    </span>
+                                </div>
+                                <div></div>
+                                <div>{reimbursement.to}</div>
+                                <div>
+                                    {/* <img src={`https://api.dicebear.com/6.x/big-ears-neutral/svg?mouth=variant0707,variant0702,variant0201&seed=${settlement.to}&radius=40&size=48`} alt="" /> */}
+                                    <img src={`https://api.dicebear.com/6.x/adventurer/svg?scale=100&skinColor=9e5622,f2d3b1,ecad80&seed=${reimbursement.to}&radius=40&size=64`} alt="" />
+                                </div>
+                            </div>
+                        </div>)
+                    })
+                }
+            </div>
+        </div>
+    </>
     return (
         <>
             {split && <div className="w-100 p-2 d-flex lin-grad1 flex-column justify-content-center" style={{ borderRadius: '10px', color: 'black' }}>
@@ -105,6 +147,7 @@ function Balances({ split, documentID, setSplit }) {
                     {getTotalExpense()}
                 </div>
             </div>}
+            {split && showReimbursementHitory && reimbursementHistory}
             {showMarkAsPaidModal && <>
                 <div className="d-flex p-3 justify-content-center align-items-center" style={{ position: 'absolute', height: '100vh', width: '100vw', backgroundColor: 'rgba(0,0,0,0.7)', top: '0', left: '0', zIndex: '2000', backdropFilter: 'blur(5px)' }}>
                     <div className='w-100 d-flex flex-column' style={{ backgroundColor: '#252525', borderRadius: '10px' }}>
@@ -152,7 +195,10 @@ function Balances({ split, documentID, setSplit }) {
                 </table>}
             </div>
             <div>
-                <h3>Settle Ups:</h3>
+                <div className="d-flex justify-content-between">
+                    <h3>Settle Ups:</h3>
+                    <p onClick={() => { setShowReimbursementHitory(true) }} style={{ color: '#9ec0e5', textDecoration: 'underline' }}>Reimbursement History</p>
+                </div>
                 {
                     settlementsArray?.map(settlement => {
                         return (

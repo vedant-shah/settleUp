@@ -16,7 +16,7 @@ function ExpensesList({ nickname, setShowExpensesPage, setViewExpenseObject, ind
                     {expense.paidBy}
                 </span>
                 </span>
-                <span>{dayjs(expense.date.toDate()).format("DD/MM/YYYY")}</span>
+                <span>{dayjs(expense.date?.toDate()).format("DD/MM/YYYY")}</span>
             </div>
         </div>
     )

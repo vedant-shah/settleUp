@@ -42,7 +42,7 @@ function Mine({ split, documentID, setSplit }) {
             {
                 split && <>
                     <div className="d-flex align-items-center w-100 my-3 justify-content-between">
-                        <h3>Balance</h3>
+                        <h3 className='mont'>Balance</h3>
                         <div className='d-flex align-items-center'>
                             {split.balances[nickname] >= 0 ? <BiTrendingUp style={{ fontSize: '2rem', color: "#67e9a9" }} /> : <BiTrendingDown style={{ fontSize: '2rem', color: "#f27979" }} />}
                             <h3 className='ms-2' style={{ color: split.balances[nickname] >= 0 ? "#67e9a9" : "#f27979" }}> {Math.abs(split.balances[nickname])}</h3>
@@ -51,7 +51,7 @@ function Mine({ split, documentID, setSplit }) {
                 </>
             }
             <div className='my-4'>
-                <h2>Invoice</h2>
+                <h2 className='mb-4'>Invoice</h2>
                 {split && <table className='table table-sm table-dark table-bordered table-striped' style={{ tableLayout: 'fixed' }}>
                     <thead>
                         <tr>
@@ -66,7 +66,7 @@ function Mine({ split, documentID, setSplit }) {
                                     return (
                                         <tr key={Math.random()}>
                                             <td className='text-center ' style={{ textOverflow: 'ellipsis', overflow: 'hiddden' }}>{expense.title}</td>
-                                            <td className='text-center ' style={{ textOverflow: 'ellipsis', overflow: 'hiddden' }}>₹ {(Number(expense.amount) / expense.sharedBy.length).toFixed(2)}</td>
+                                            <td className='text-center ' style={{ textOverflow: 'ellipsis', overflow: 'hiddden' }}>₹ {(Number(expense.amountPerPerson[nickname])).toFixed(2)}</td>
                                         </tr>
                                     )
                             })

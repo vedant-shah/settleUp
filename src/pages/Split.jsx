@@ -6,6 +6,7 @@ import { IoChevronBack } from 'react-icons/io5'
 import { BsPiggyBank } from 'react-icons/bs'
 import { FaExchangeAlt } from 'react-icons/fa'
 import { BsPlusCircleFill } from 'react-icons/bs'
+import { RxCross2 } from 'react-icons/rx'
 import { useForm } from 'react-hook-form';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
@@ -39,6 +40,8 @@ function Split() {
     const [simpleAdvancedToggle, setSimpleAdvancedToggle] = useState("Simple")
     const [currentTab, setCurrentTab] = useState(1)
     const [paidBy, setPaidBy] = useState()
+    const [dummyState, setDummyState] = useState(0)
+    const [showModifySplit, setShowModifySplit] = useState(false)
     const [sharedBy, setSharedBy] = useState([])
     const [sharedByChecks, setSharedByChecks] = useState()
     const [amount, setAmount] = useState(0)
@@ -111,7 +114,7 @@ function Split() {
     //* on submit function
     const addNewExpense = async (data) => {
         data["amount"] = amount
-        data["date"] = startDate
+
         data["sharedBy"] = sharedBy
         data["paidBy"] = paidBy
 
@@ -147,16 +150,20 @@ function Split() {
             balances[person] = (balancesNumeral.minus(amountPerPersonNumeral)).toNumber()
             individualExpenses[person] += data.amountPerPerson[person]
         })
+        const sum = Object.values(data.amountPerPerson).reduce((total, value) => total + value, 0);
+        if (Math.round(Number(data.amount)) !== Math.round(sum)) {
+            alert("The Amounts Dont Add Up")
+            return
+        }
+        data["date"] = startDate
         const balancesPaidByNumeral = new Decimal(balances[paidBy].toFixed(2))
         balances[paidBy] = (balancesPaidByNumeral.plus(new Decimal(Number(data.amount).toFixed(2)))).toNumber()
         setSplit({ ...split, expenses, balances })
         const localSplit = { ...split, expenses, balances }
         const { id } = split
-        console.log("id:", id)
         try {
             const userDocInstance = doc(db, "splits", documentID)
             await updateDoc(userDocInstance, localSplit)
-            // history.push(`/split/${id}`)
             location.reload()
         } catch (error) {
             console.log("error:", error)
@@ -435,11 +442,136 @@ function Split() {
             </div>
         </div>}
     </>
+    const [newSplitName, setNewSplitName] = useState('')
+    const [newParticipant, setNewParticipant] = useState('')
+    const [newFriendsArray, setNewFriendsArray] = useState([])
+    const shouldCrossBeVisible = (split, participant) => {
+        let value = 'block'
+        split.expenses.forEach(expense => {
+            if (expense.sharedBy.includes(participant) || expense.paidBy === participant)
+                value = 'none'
+        })
+        return value
+    }
+    const editSplitModal = <>
+        {split && <div className='p-4 d-flex  flex-column' style={{ height: '100vh', width: '100vw', position: 'absolute', zIndex: '100', backgroundColor: '#171717', overflowY: 'scroll' }}>
+            <div className="d-flex align-items-center justify-content-between">
+                <h2 className='display-4 my-3' style={{ color: '#9ec0e5' }}>Edit Split</h2>
+                <RxCross2 onClick={() => {
+                    setShowModifySplit(false)
+                }} style={{ fontSize: '1.5rem' }} />
+            </div>
+            <div className='d-flex w-100 justify-content-between align-items-center'>
+                <span style={{ fontSize: '1.5rem' }}>Title:</span>
+                <input
+                    type="text"
+                    style={{ height: '2.5rem', width: '75%' }}
+                    value={newSplitName}
+                    className="form-control m-2"
+                    placeholder={split.title[0].toUpperCase() + split.title.substring(1)}
+                    onChange={(e) => {
+                        setNewSplitName(e.target.value)
+                    }}
+                />
+            </div>
+            <h2 className='display-4 my-3' style={{ color: '#9ec0e5' }}>Participants</h2>
+            <div style={{ height: '45%', overflowY: 'scroll' }}>
+
+                {
+                    split.participants.map(participant => {
+                        return (<div className='w-100 my-2 d-flex align-items-center justify-content-between' key={Math.random()}>
+                            <h3>
+                                {participant}
+                            </h3>
+                            <RxCross2 style={{ display: shouldCrossBeVisible(split, participant), fontSize: '1.5rem' }} onClick={() => {
+                                let temp = { ...split }
+                                delete temp.participantsWithEmail[participant]
+                                delete temp.balances[participant]
+                                temp = { ...temp, participants: temp.participants.filter(friend => friend !== participant) }
+                                setSplit({ ...temp })
+                                console.log(temp)
+                            }} />
+                        </div>)
+                    })
+                }
+                {
+                    newFriendsArray?.map(participant => {
+                        return (<div className='w-100 my-2 d-flex align-items-center justify-content-between' key={Math.random()}>
+                            <h3>
+                                {participant}
+                            </h3>
+                            <RxCross2 style={{ display: shouldCrossBeVisible(split, participant), fontSize: '1.5rem' }} onClick={() => {
+                                const temp = newFriendsArray.filter(element => element !== participant)
+                                setNewFriendsArray(temp)
+                            }} />
+                        </div>)
+                    })
+                }
+            </div>
+            <div className="dflex my-4 align-items-center input-group">
+                <input
+                    type="text"
+                    style={{ height: '2.4rem', width: '65%', display: 'inline' }}
+                    value={newParticipant}
+                    className="form-control mb-0"
+                    placeholder="Add New Paarticipant"
+                    onChange={(e) => {
+                        setNewParticipant(e.target.value)
+                    }}
+                />
+                <button onClick={() => {
+                    if (newParticipant !== '' && !split.participants.includes(newParticipant) && !newFriendsArray.includes(newParticipant)) {
+                        setNewFriendsArray([...newFriendsArray, newParticipant])
+                        setNewParticipant('')
+                    }
+                }} className='btn btn-primary m-0'>Add</button>
+            </div>
+            <span className='my-2'><i>Note: Hit Save to Save the Changes</i></span>
+            <button className="btn btn-primary" onClick={async () => {
+                const newParticipantsArray = [...split.participants, ...newFriendsArray]
+                newFriendsArray.forEach(friend => {
+                    split.participantsWithEmail[friend] = ''
+                    split.balances[friend] = 0
+                })
+                if (newSplitName !== '')
+                    split.title = newSplitName
+                console.log("split:", split)
+                try {
+
+                    const userDocInstance = doc(db, "splits", documentID)
+                    await updateDoc(userDocInstance, { ...split, participants: newParticipantsArray })
+                    location.reload()
+                } catch (e) {
+                    console.log("e:", e)
+                }
+            }}>Save</button>
+            <button onClick={() => {
+                setShowConfirmDelete(true)
+            }} className="btn btn-outline-danger my-4">Delete Split</button>
+        </div>}
+    </>
+    const [showConfirmDelete, setShowConfirmDelete] = useState(false)
+    const confirmDeleteModal = <>
+        {split && <div className='p-4 d-flex justify-content-center align-items-center  flex-column' style={{ height: '100vh', width: '100vw', position: 'absolute', zIndex: '1000', backgroundColor: '#171717', overflowY: 'scroll' }}>
+            <div className="card p-3">
+                Are you sure you want to Completely Delete the entire Split, for you and all other Participants? This cannot be undone!
+
+                <div className="input-group mt-4">
+                    <button className="btn w-50 btn-success" onClick={() => { setShowConfirmDelete(false) }}>No</button>
+                    <button className="btn w-50 btn-danger" onClick={() => {
+                        alert('Feature Pending. Sorry 😅')
+                    }}>Yes</button>
+                </div>
+            </div>
+        </div>}
+    </>
     let { nickname } = JSON.parse(localStorage.getItem("user"));
     return (<>
         {split && <div style={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column' }}>
             {showAddNewExpense && addNewExpenseModal}
             {showChooseNameModal && split && chooseNameModal}
+            {showConfirmDelete && split && confirmDeleteModal}
+            {showModifySplit && split && editSplitModal}
             {showExpensesPage && viewExpenseObject && <ViewExpense setShowExpensesPage={setShowExpensesPage} expense={viewExpenseObject} nickname={nickname} split={split} documentID={documentID} />}
             <div
                 className="d-flex justify-content-center flex-column p-0 align-items-start"
@@ -453,7 +585,9 @@ function Split() {
                 <div className='d-flex w-100 px-4 align-items-center justify-content-between'>
                     <div className='d-flex py-3 align-items-center'>
                         <IoChevronBack onClick={() => { history.push('/home') }} style={{ fontSize: '2.5rem', color: '#9ec0e5' }} />
-                        <h2 className='mont mx-4 display-6'>{split.title}</h2>
+                        <h2 onClick={() => {
+                            setShowModifySplit(true)
+                        }} className='mont mx-4 display-6'>{split.title[0].toUpperCase() + split.title.substring(1)}</h2>
                     </div>
                     <div className='px-3' style={{ backgroundColor: split.balances[nickname] < 0 ? '#f27979' : '#67e9a9', color: '#1a1a1a', borderRadius: '10px' }}>
                         ₹ {split.balances[nickname].toFixed(2)}

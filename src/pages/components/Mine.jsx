@@ -6,14 +6,9 @@ function Mine({ split, documentID, setSplit }) {
     const getTotalExpense = () => {
         let total = new Decimal(0.00)
         split.expenses.forEach(expense => {
-            if (expense.paidBy === nickname)
-                total = total.plus(new Decimal(expense.amount))
-        })
-        split.reimbursement?.forEach(expense => {
-            if (expense.from === nickname)
-                total = total.plus(new Decimal(expense.amount))
-            if (expense.to === nickname)
-                total = total.minus(new Decimal(expense.amount))
+            if (expense.sharedBy.includes(nickname)) {
+                total = total.plus(expense.amountPerPerson[nickname])
+            }
         })
         return total.toNumber().toLocaleString(undefined, { minimumFractionDigits: 2 })
     }

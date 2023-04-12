@@ -66,6 +66,7 @@ function Split() {
         })
         console.log(temp[0])
         setSplit(temp[0])
+        setSharedBy(temp[0].participants)
         const { email } = JSON.parse(localStorage.getItem('user'))
         const user = JSON.parse(localStorage.getItem('user'))
         if (!Object.values(temp[0].participantsWithEmail).includes(email)) {
@@ -85,7 +86,7 @@ function Split() {
             const t = {}
             temp[0].participants.forEach((participant, index) => {
                 // index === 0 ? t[participant] = true :
-                t[participant] = false;
+                t[participant] = true;
             })
             return t
         })
@@ -602,8 +603,8 @@ function Split() {
                             setShowModifySplit(true)
                         }} className='mont mx-4 display-6'>{split.title[0].toUpperCase() + split.title.substring(1)}</h2>
                     </div>
-                    <div className='px-3' style={{ backgroundColor: split.balances[nickname] < 0 ? '#f27979' : '#67e9a9', color: '#1a1a1a', borderRadius: '10px' }}>
-                        ₹ {split.balances[nickname].toFixed(2)}
+                    <div className='px-2' style={{ backgroundColor: split.balances[nickname] < 0 ? '#f27979' : '#67e9a9', color: '#1a1a1a', borderRadius: '10px', fontSize: '1rem' }}>
+                        ₹ {Math.abs(split.balances[nickname].toFixed(2))}
                     </div>
                 </div>
                 <div className='mt-3 w-100 d-flex justify-content-around'>

@@ -19,7 +19,7 @@ function ViewExpense({ expense, setShowExpensesPage, nickname, split, documentID
     const balancesPaidByNumeral = new Decimal(split.balances[expense.paidBy].toFixed(2))
     split.balances[expense.paidBy] = (balancesPaidByNumeral.minus(new Decimal(Number(expense.amount).toFixed(2)))).toNumber()
     const filteredExpense = split.expenses.filter(e => {
-      if (e.title !== expense.title) {
+      if (JSON.stringify(e) !== JSON.stringify(expense)) {
         return e
       }
     })

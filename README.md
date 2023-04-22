@@ -29,3 +29,6 @@ Say you're on a ski trip with four friends and you want to split the cost of lod
 
 ## Supported Platforms
 - Web browser with JS support
+
+## Hosting
+https://settleup-2c61f.web.app/

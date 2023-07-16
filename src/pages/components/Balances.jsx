@@ -33,6 +33,7 @@ function Balances({ split, documentID, setSplit }) {
         return Object.keys(bal).find(key => bal[key] === max);
     }
     const getSettlementArray = () => {
+        console.log(balance)
         let temp = []
         while (1) {
             const min = getMin(balance);
@@ -45,7 +46,7 @@ function Balances({ split, documentID, setSplit }) {
                 balance[max] = parseFloat((balance[max] - Math.abs(balance[min])).toFixed(2));
                 balance[min] = 0;
             } else if (Math.abs(balance[min]) > balance[max]) {
-                temp.push({ from: min, to: max, amount: Math.abs(balance[min]) })
+                temp.push({ from: min, to: max, amount: Math.abs(balance[max]) })
                 // console.log(min + " pays " + max + " " + Math.abs(balances[min]))
                 balance[min] = parseFloat((balance[min] + balance[max]).toFixed(2));
                 balance[max] = 0;

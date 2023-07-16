@@ -22,6 +22,7 @@ import Mine from './components/Mine';
 function Split() {
     const history = useHistory()
     const { id } = useParams()
+    let tempDocId = ''
     const splitsRef = collection(db, "splits");
     const {
         register,
@@ -38,7 +39,7 @@ function Split() {
     const [showExpensesPage, setShowExpensesPage] = useState(false)
     const [viewExpenseObject, setViewExpenseObject] = useState()
     const [simpleAdvancedToggle, setSimpleAdvancedToggle] = useState("Simple")
-    let { nickname } = JSON.parse(localStorage.getItem("user"));
+    let nickname = JSON.parse(localStorage.getItem("user"))?.nickname || '';
     const [currentTab, setCurrentTab] = useState(() => {
         if (!localStorage.getItem('nicknameChosen'))
             return 0
@@ -101,10 +102,12 @@ function Split() {
         setPaidBy(temp[0].participants[0])
     }
     useEffect(() => {
-        const { email } = JSON.parse(localStorage.getItem('user'))
-        if (!email)
+        const data = localStorage.getItem('user')
+        console.log("data:", data)
+        if (!data)
             history.push('/signin')
         else {
+            // nickname = JSON.parse(localStorage.getItem("user"));
             getCurrentSplit()
         }
     }, [])
@@ -396,6 +399,7 @@ function Split() {
         userSplitsData.docs.map(doc => {
             temp.push({ ...doc.data(), id: split.id })
             setDocID(doc.id)
+            tempDocId = doc.id
         })
         console.log("temp:", temp[0])
 
@@ -413,7 +417,8 @@ function Split() {
             const { allUserSplits, id } = temp[0]
             allUserSplits[split.title] = split.id
             try {
-                const userDocInstance = doc(db, "userSplits", docID)
+                const userDocInstance = doc(db, "userSplits", tempDocId)
+                // console.log("allUserSplits:", allUserSplits)
                 await updateDoc(userDocInstance, { allUserSplits: allUserSplits })
             } catch (e) {
                 console.log("e:", e)

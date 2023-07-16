@@ -9,6 +9,7 @@ import { useHistory } from "react-router-dom";
 import { IoChevronBack } from "react-icons/io5";
 
 function Addsplit() {
+  let tempDocId = '';
   const history = useHistory()
   const [pageNo, setPageNo] = useState(1);
   const [docID, setDocID] = useState()
@@ -70,6 +71,7 @@ function Addsplit() {
     const temp = []
     userSplitsData.docs.map(doc => {
       temp.push({ ...doc.data(), id: data.id })
+      tempDocId = doc.id
       setDocID(doc.id)
     })
     console.log("temp:", temp[0])
@@ -88,7 +90,7 @@ function Addsplit() {
       const { allUserSplits, id } = temp[0]
       allUserSplits[data.title] = data.id
       try {
-        const userDocInstance = doc(db, "userSplits", docID)
+        const userDocInstance = doc(db, "userSplits", tempDocId)
         updateDoc(userDocInstance, { allUserSplits: allUserSplits })
       } catch (e) {
         console.log("e:", e)

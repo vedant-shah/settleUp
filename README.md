@@ -1,4 +1,5 @@
 # SettleUp
+##### Best viewed on a mobile browser.
 
 SettleUp is a simple yet powerful tool for splitting bills with friends, roommates, colleagues, and couples. It lets you easily breakdown the budget of a group and track expenses during any occasion.
 
@@ -32,3 +33,13 @@ Say you're on a ski trip with four friends and you want to split the cost of lod
 
 ## Hosting
 https://settleup-2c61f.web.app/
+
+## Screenshots
+<img src="https://github.com/vedant-shah/settleUp/assets/87229097/41847c5b-c2d7-4716-a1e8-ecb2ac2791c0" width="150" height="350">
+<img src="https://github.com/vedant-shah/settleUp/assets/87229097/a1997a62-4501-4a1a-9b8c-4534eccf58ab" width="150" height="350">
+<img src="https://github.com/vedant-shah/settleUp/assets/87229097/9a64ba36-8c33-451e-a08b-7c72d4533d01" width="150" height="350">
+<img src="https://github.com/vedant-shah/settleUp/assets/87229097/d00b681b-da4e-4be6-b600-e9294622a243" width="150" height="350">
+<img src="https://github.com/vedant-shah/settleUp/assets/87229097/61de46b8-06e4-4edc-b1ad-6df9ee157963" width="150" height="350">
+<img src="https://github.com/vedant-shah/settleUp/assets/87229097/612088c1-552d-44d5-b902-c162f2532bd5" width="150" height="350">
+
+

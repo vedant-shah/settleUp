@@ -19,7 +19,9 @@ Say goodbye to the old Excel file and try SettleUp today. It's perfect for organ
 ## Usage
 1. Create a split on your mobile device during your group activity
 2. Share the link with everyone in the group
-3. Add expenses as you go and watch SettleUp do the accounting and balance the cost for your group
+3. Friends first log in, and then open the link that was shared by you.
+4. Choose your personas and done! You're successfully sharing the split!
+5. Add expenses as you go and watch SettleUp do the accounting and balance the cost for your group
 
 ## Example
 Say you're on a ski trip with four friends and you want to split the cost of lodging, lift tickets, and groceries. 
@@ -30,6 +32,7 @@ Say you're on a ski trip with four friends and you want to split the cost of lod
 
 ## Supported Platforms
 - Web browser with JS support
+- Recommended on mobile devices.
 
 ## Hosting
 https://settleup-2c61f.web.app/
